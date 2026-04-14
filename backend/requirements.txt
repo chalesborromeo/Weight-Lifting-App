@@ -1,4 +1,10 @@
 fastapi
+<<<<<<< HEAD
+sqlalchemy
+psycopg2-binary
+uvicorn
+python-dotenv
+=======
 uvicorn
 sqlalchemy
 pydantic
@@ -8,3 +14,4 @@ passlib[bcrypt]
 psycopg2-binary
 python-dotenv
 python-jose[cryptography]
+>>>>>>> main
