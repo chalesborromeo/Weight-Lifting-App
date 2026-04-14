@@ -1,5 +1,8 @@
 from fastapi import APIRouter, Depends
 
+from backend.app.schemas.user import UserCreate
+from backend.app.services.user_service import UserService
+
 def get_user_service() -> UserService:
     return UserService()
 
@@ -20,8 +23,9 @@ class UserRouter():
         Returns:
             list: A list of all users
         """
+        return service.get_all_users()
 
-    async def create(self, service:UserService = Depends(get_user_service)):
+    async def create(self, user: UserCreate, service:UserService = Depends(get_user_service)):
         """
         Registers a new user
 
@@ -31,7 +35,7 @@ class UserRouter():
         Returns:
             User: The newly created user 
         """
-        pass
+        return service.create_user(user)
 
     async def get_one(self, user_id: int, service:UserService = Depends(get_user_service)):
         """
@@ -44,7 +48,7 @@ class UserRouter():
         Returns:
             User: The user record matching the given user_id
         """
-        pass
+        return service.get_user(user_id)
 
 
 
