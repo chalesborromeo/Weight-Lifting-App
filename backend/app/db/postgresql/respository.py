@@ -9,8 +9,8 @@ class PostgreSQLRepository(DBRepository):
         self.connection = connection
 
     def get_all_users(self):
-        with self.connenction.get_session() as session:
-            session.query(User).all()
+        with self.connection.get_session() as session:
+            return session.query(User).all()
 
 
     def save_user(self, user):
@@ -21,4 +21,4 @@ class PostgreSQLRepository(DBRepository):
 
     def get_user(self, user_id):
         with self.connection.get_session() as session:
-            session.query(User).filter(User.id == user_id).all()
+            return session.query(User).filter(User.id == user_id).first()

@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends
 
-from backend.app.schemas.user import UserCreate
-from backend.app.services.user_service import UserService
+from app.schemas.user import UserCreate
+from app.services.user_service import UserService
+from app.db.postgresql.factory import PostgreSQLFactory
 
 def get_user_service() -> UserService:
-    return UserService()
+    return UserService(PostgreSQLFactory.create_db_repository())
 
 class UserRouter():
     def __init__(self):

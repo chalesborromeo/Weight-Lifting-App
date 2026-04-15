@@ -1,19 +1,23 @@
 
-from backend.app.db.repositories import DBRepository
-from backend.app.schemas.user import UserCreate
+from app.db.repositories import DBRepository
+from app.schemas.user import UserCreate
+from app.models.user import User
 
+from pwdlib import PasswordHash
 
 class UserService():
-    def __init___(self, repo: DBRepository):
+    password_hash = PasswordHash.recommended()
+
+    def __init__(self, repo: DBRepository):
         self.repo = repo
 
     def get_all_users(self):
         return self.repo.get_all_users()
 
     def create_user(self, user:UserCreate):
-        new_user = User() # import from /models
+        new_user = User()
         new_user.email = user.email
-        new_user.password = user.password
+        new_user.password = self.password_hash.hash(user.password)
 
         return self.repo.save_user(new_user)
 

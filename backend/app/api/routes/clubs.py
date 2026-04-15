@@ -1,6 +1,6 @@
 from fastapi import Dependency, APIRouter
 
-from backend.app.services.club_service import ClubService
+from app.services.club_service import ClubService
 
 def get_club_service():
     return ClubService()
