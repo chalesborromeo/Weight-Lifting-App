@@ -1,17 +1,13 @@
 fastapi
-<<<<<<< HEAD
 sqlalchemy
 psycopg2-binary
-uvicorn
 python-dotenv
-=======
 uvicorn
 sqlalchemy
 pydantic
 pydantic-settings
 email-validator
 passlib[bcrypt]
-psycopg2-binary
 python-dotenv
 python-jose[cryptography]
->>>>>>> main
+pwdlib[argon2]
