@@ -13,5 +13,4 @@ class PostgreSQLFactory(DBFactory):
 
     @classmethod
     def create_db_repository(cls) -> DBRepository:
-        connection = PostgreSQLConnection.get_instance()
-        return PostgreSQLRepository(connection)
+        return PostgreSQLRepository()

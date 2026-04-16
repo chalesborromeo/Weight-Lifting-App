@@ -1,6 +1,6 @@
 from sqlalchemy import Column,String,Integer,ForeignKey,Float
 from sqlalchemy.orm import relationship
-from app.core.database import Base
+from app.db.base import Base
 
 class Workout(Base):
     __tablename__="workouts" #name of table in PostgreSQL

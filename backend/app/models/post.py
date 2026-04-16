@@ -1,6 +1,6 @@
 from sqlalchemy import Column,String,Integer,ForeignKey,DateTime
 from sqlalchemy.orm import relationship
-from app.core.database import Base
+from app.db.base import Base
 from datetime import datetime,timezone
 
 class Post(Base):
@@ -20,6 +20,10 @@ class Post(Base):
     #links post to a workout
     workout_id=Column(Integer,ForeignKey("workouts.id"),nullable=True)
 
-    #lets you do posts.user in python
+    club_id = Column(Integer, ForeignKey("clubs.id"), nullable=True)
+
+    #relationships
+    club = relationship("Club", back_populates="posts")
     user=relationship("User",back_populates="posts")
+    comments=relationship("Comment", back_populates="post")
 

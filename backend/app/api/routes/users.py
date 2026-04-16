@@ -3,16 +3,24 @@ from fastapi import APIRouter, Depends
 from app.schemas.user import UserCreate
 from app.services.user_service import UserService
 from app.db.postgresql.factory import PostgreSQLFactory
+from app.db.postgresql.connection import PostgreSQLConnection
+from app.schemas.user import UserResponse
 
-def get_user_service() -> UserService:
-    return UserService(PostgreSQLFactory.create_db_repository())
+def get_db():
+    connection = PostgreSQLConnection.get_instance()
+    with connection.get_session() as session:
+        yield session
+
+def get_user_service(session = Depends(get_db)) -> UserService:
+    repo = PostgreSQLFactory.create_db_repository()
+    return UserService(repo, session)
 
 class UserRouter():
     def __init__(self):
         self.router = APIRouter(prefix="/users", tags=["users"])
-        self.router.add_api_route("/", self.get_all, methods=["GET"])
-        self.router.add_api_route("/register", self.create, methods=["POST"])
-        self.router.add_api_route("/{user_id}", self.get_one, methods=["GET"])
+        self.router.add_api_route("/", self.get_all, methods=["GET"], response_model=list[UserResponse])
+        self.router.add_api_route("/register", self.create, methods=["POST"], response_model=UserResponse)
+        self.router.add_api_route("/{user_id}", self.get_one, methods=["GET"], response_model=UserResponse)
         
     async def get_all(self, service:UserService = Depends(get_user_service)):
         """

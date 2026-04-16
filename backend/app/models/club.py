@@ -1,6 +1,6 @@
 from sqlalchemy import Column,String,Integer,ForeignKey,Table
 from sqlalchemy.orm import relationship
-from app.core.database import Base
+from app.db.base import Base
 
 club_members=Table(
     "club_members",
@@ -17,10 +17,7 @@ class Club(Base):
     #fields
     privacy=Column(String(100),nullable=False)
 
-    #links club to a post
-    post_id=Column(Integer,ForeignKey("posts.id"),nullable=True)
-
     #lets you do club.post
-    post=relationship("Post",back_populates="club")
+    posts=relationship("Post",back_populates="club")
 
     members=relationship("User",secondary=club_members)
