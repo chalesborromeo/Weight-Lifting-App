@@ -10,7 +10,7 @@ class PostgreSQLConnection(DBConnection):
 
     def __init__(self):
         self.engine = create_engine(settings.DATABASE_URL)
-        self.SessionLocal = sessionmaker(bind=self.engine)
+        self.SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=self.engine, expire_on_commit=False)
 
     @contextmanager
     def get_session(self):

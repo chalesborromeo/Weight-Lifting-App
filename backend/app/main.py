@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from app.api.routes.users import UserRouter
 from app.db.base import Base
 from app.db.postgresql.factory import PostgreSQLFactory
+from app.models import club, comment, notification, peer, post, profile, spot_Request, user, workout
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

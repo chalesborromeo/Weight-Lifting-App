@@ -1,6 +1,6 @@
 from sqlalchemy import Column,String,Integer,Float,ForeignKey
 from sqlalchemy.orm import relationship
-from app.core.database import Base
+from app.db.base import Base
 
 class Profile(Base):
     __tablename__="profiles" #Name of table in PostgreSQL
