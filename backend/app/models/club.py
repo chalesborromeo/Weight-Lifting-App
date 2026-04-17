@@ -15,9 +15,11 @@ class Club(Base):
     id=Column(Integer,primary_key=True,index=True)
 
     #fields
+    name=Column(String(100), nullable=False)
     privacy=Column(String(100),nullable=False)
+    owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
-    #lets you do club.post
+    #relationships
+    owner=relationship("User",foreign_keys=[owner_id], back_populates="owned_clubs")
     posts=relationship("Post",back_populates="club")
-
-    members=relationship("User",secondary=club_members)
+    members=relationship("User",secondary=club_members, back_populates="clubs")
