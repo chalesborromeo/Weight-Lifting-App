@@ -5,7 +5,7 @@ from app.api.routes.users import UserRouter
 from app.api.routes.clubs import ClubRouter
 from app.db.base import Base
 from app.db.postgresql.factory import PostgreSQLFactory
-from app.models import club, comment, notification, peer, post, profile, spot_Request, user, workout
+from app.models import models
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
