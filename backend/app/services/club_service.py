@@ -39,7 +39,7 @@ class ClubService():
         club = self.repo.get_club(club_id, self.session)
 
         club.members.remove(user)
-        self.repo.save_club(club)
+        self.repo.save_club(club, self.session)
         self.session.refresh(club)
         return club
     
