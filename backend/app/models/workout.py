@@ -18,4 +18,4 @@ class Workout(Base):
 
     #lets you do workout.user in Python
     user=relationship("User",back_populates="workouts")
-    exercises=relationship("Exercise", back_populates="workout")
+    exercises=relationship("Exercise", back_populates="workout", cascade="all, delete-orphan")

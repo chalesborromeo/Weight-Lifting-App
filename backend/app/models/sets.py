@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey, Float
 from sqlalchemy.orm import relationship
 from app.db.base import Base
 
-class Set(Base):
+class Sets(Base):
     __tablename__ = "sets"
 
     # primary key

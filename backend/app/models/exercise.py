@@ -13,5 +13,5 @@ class Exercise(Base):
     workout_id = Column(Integer, ForeignKey("workouts.id"), nullable=False)
 
     # relationships
-    sets=relationship("Set", back_populates="exercise")
+    sets=relationship("Sets", back_populates="exercise", cascade="all, delete-orphan")
     workout=relationship("Workout", back_populates="exercises")
