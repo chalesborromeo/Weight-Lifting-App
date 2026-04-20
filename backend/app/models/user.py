@@ -14,10 +14,10 @@ class User(Base):
     password=Column(String(100),nullable=False)
     
     # RELATIONSHIPS
-    profile = relationship("Profile", back_populates="user", uselist=False)
-    workouts = relationship("Workout", back_populates="user")
-    posts = relationship("Post", back_populates="user")
-    comments = relationship("Comment", back_populates="user")
-    notifications = relationship("Notification", back_populates="user")
+    profile = relationship("Profile", back_populates="user", uselist=False, cascade="all, delete-orphan")
+    workouts = relationship("Workout", back_populates="user", cascade="all, delete-orphan")
+    posts = relationship("Post", back_populates="user", cascade="all, delete-orphan")
+    comments = relationship("Comment", back_populates="user", cascade="all, delete-orphan")
+    notifications = relationship("Notification", back_populates="user", cascade="all, delete-orphan")
     clubs = relationship("Club", secondary=club_members, back_populates="members")
-    owned_clubs = relationship('Club', back_populates="owner", foreign_keys="Club.owner_id")
+    owned_clubs = relationship('Club', back_populates="owner", foreign_keys="Club.owner_id", cascade="all, delete-orphan")

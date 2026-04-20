@@ -2,6 +2,7 @@
 from app.db.repositories import DBRepository
 from app.models.user import User
 from app.models.club import Club
+from app.models.workout import Workout
 
 
 class PostgreSQLRepository(DBRepository):
@@ -35,4 +36,27 @@ class PostgreSQLRepository(DBRepository):
         if club:
             session.delete(club)
             session.flush()
+    
+    # Workout
+    def get_all_workouts(self, session):
+        return session.query(Workout).all()
+    
+    def get_users_workouts(self, user_id, session):
+        return session.query(Workout).filter(Workout.user_id == user_id).all()
+    
+    def get_workout(self, workout_id, session):
+        return session.query(Workout).filter(Workout.id == workout_id).first()
+
+    def save_workout(self, workout, session):
+        session.add(workout)
+        session.flush()
+        return workout
+    
+    def delete_workout(self, workout_id, session):
+        workout = session.query(Workout).filter(Workout.id == workout_id).first()
+        if workout:
+            session.delete(workout)
+            session.flush()
+
+        return workout
     
