@@ -1,6 +1,10 @@
 from abc import ABC, abstractmethod
 
 class DBRepository(ABC):
+
+    @abstractmethod
+    def get_user_by_email(self, email, session):pass
+
     # User
     @abstractmethod
     def get_all_users(self, session): pass
