@@ -7,6 +7,9 @@ from app.models.workout import Workout
 
 class PostgreSQLRepository(DBRepository):
 
+    def get_user_by_email(self, email, session):
+        return session.query(User).filter(User.email == email).first()
+
     # User
     def get_all_users(self, session):
         return session.query(User).all()
