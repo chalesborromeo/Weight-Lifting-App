@@ -1,6 +1,7 @@
 import { motion } from 'motion/react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
+import { useCurrentUser } from '@/context/CurrentUser';
 
 const goals = [
   { id: 'strength', label: 'Build Strength', desc: 'Focus on progressive overload and compound lifts' },
@@ -19,20 +20,39 @@ const daysOptions = [2, 3, 4, 5, 6];
 
 export default function GetStarted() {
   const navigate = useNavigate();
+  const { register } = useCurrentUser();
   const [step, setStep] = useState(0);
   const [selectedGoal, setSelectedGoal] = useState<string | null>(null);
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
   const [selectedDays, setSelectedDays] = useState<number | null>(null);
   const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const totalSteps = 4;
 
   const canProceed = () => {
-    if (step === 0) return name.trim().length > 0;
+    if (step === 0) return name.trim().length > 0 && email.trim().length > 0 && password.length >= 6;
     if (step === 1) return selectedGoal !== null;
     if (step === 2) return selectedLevel !== null;
     if (step === 3) return selectedDays !== null;
     return false;
+  };
+
+  const handleFinish = async () => {
+    setSubmitting(true);
+    setError(null);
+    try {
+      await register({ email: email.trim(), password });
+      navigate('/feed');
+    } catch (err) {
+      const detail = (err as any)?.body?.detail;
+      setError(detail ?? (err instanceof Error ? err.message : 'Registration failed. Please try again.'));
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -73,17 +93,33 @@ export default function GetStarted() {
             className="w-full max-w-sm space-y-8"
           >
             <div className="space-y-3 text-center">
-              <h1 className="text-3xl tracking-tight text-black">What's your name?</h1>
-              <p className="text-base text-black/60">Let's make this personal.</p>
+              <h1 className="text-3xl tracking-tight text-black">Let's get you set up</h1>
+              <p className="text-base text-black/60">Create your account to get started.</p>
             </div>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Enter your name"
-              className="w-full px-6 py-4 bg-black/5 rounded-full text-black placeholder:text-black/30 outline-none focus:ring-2 focus:ring-black/20 transition-all text-center text-lg"
-              autoFocus
-            />
+            <div className="space-y-3">
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Your name"
+                className="w-full px-6 py-4 bg-black/5 rounded-full text-black placeholder:text-black/30 outline-none focus:ring-2 focus:ring-black/20 transition-all text-center text-lg"
+                autoFocus
+              />
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email address"
+                className="w-full px-6 py-4 bg-black/5 rounded-full text-black placeholder:text-black/30 outline-none focus:ring-2 focus:ring-black/20 transition-all text-center text-lg"
+              />
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password (6+ characters)"
+                className="w-full px-6 py-4 bg-black/5 rounded-full text-black placeholder:text-black/30 outline-none focus:ring-2 focus:ring-black/20 transition-all text-center text-lg"
+              />
+            </div>
           </motion.div>
         )}
 
@@ -212,24 +248,26 @@ export default function GetStarted() {
 
       {/* Bottom CTA */}
       <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-white/95 backdrop-blur-md border-t border-black/5">
+        {error && (
+          <p className="text-red-500 text-sm text-center mb-2">{error}</p>
+        )}
         <motion.button
           whileTap={{ scale: 0.97 }}
           onClick={() => {
             if (step < totalSteps - 1) {
               setStep(step + 1);
             } else {
-              // Final step — could navigate to a dashboard or confirmation
-              alert(`Welcome, ${name}! Your profile is set up.`);
+              handleFinish();
             }
           }}
-          disabled={!canProceed()}
+          disabled={!canProceed() || submitting}
           className={`w-full px-6 py-4 rounded-full text-base transition-all ${
-            canProceed()
+            canProceed() && !submitting
               ? 'bg-black text-white active:scale-95'
               : 'bg-black/10 text-black/30 cursor-not-allowed'
           }`}
         >
-          {step < totalSteps - 1 ? 'Continue' : 'Let\'s Go'}
+          {submitting ? 'Setting up...' : step < totalSteps - 1 ? 'Continue' : 'Let\'s Go'}
         </motion.button>
       </div>
     </div>

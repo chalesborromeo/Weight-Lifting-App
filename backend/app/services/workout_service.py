@@ -4,6 +4,7 @@ from app.schemas.workout import WorkoutCreate
 from app.models.workout import Workout
 from app.models.exercise import Exercise
 from app.models.sets import Sets
+from app.models.post import Post
 
 class WorkoutService():
     def __init__(self, repo: DBRepository, session):
@@ -46,6 +47,14 @@ class WorkoutService():
 
         self.repo.save_workout(new_workout, self.session)
         self.session.refresh(new_workout)
+
+        # Auto-create a post for this workout
+        post = Post()
+        post.user_id = new_workout.user_id
+        post.workout_id = new_workout.id
+        post.text = f"Just completed {new_workout.name}"
+        self.repo.save_post(post, self.session)
+
         return new_workout
 
     def delete_workout(self, workout_id):

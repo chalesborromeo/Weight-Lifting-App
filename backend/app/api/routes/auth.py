@@ -32,3 +32,9 @@ class AuthRouter():
     async def register(self, user:UserRegister, service: AuthService = Depends(get_auth_service)):
         return service.register_user(user)
 
+    async def logout(self):
+        return {"message": "Logged out"}
+
+    async def refresh(self):
+        raise HTTPException(status_code=501, detail="Not implemented")
+
