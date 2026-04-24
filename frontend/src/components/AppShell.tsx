@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from "react-router";
-import { Heart, Plus, Trophy, User } from "lucide-react";
+import { Heart, Plus, Trophy, User, CircleUser } from "lucide-react";
 import { useCurrentUser } from "@/context/CurrentUser";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { NotificationBell } from "@/components/NotificationBell";
@@ -20,9 +20,9 @@ export function AppShell() {
             {user && <NotificationBell />}
             {user ? (
               <NavLink
-                to="/profile/edit"
+                to="/profile"
                 className="w-[50px] h-[50px] rounded-full bg-accent flex items-center justify-center text-white text-lg font-bold"
-                aria-label="Edit profile"
+                aria-label="Profile"
               >
                 {user.email.charAt(0).toUpperCase()}
               </NavLink>
@@ -43,7 +43,6 @@ export function AppShell() {
             { to: "/feed", label: "Feed" },
             { to: "/workouts", label: "Workouts" },
             { to: "/prs", label: "PRs" },
-            { to: "/metrics", label: "Metrics" },
             { to: "/clubs", label: "Clubs" },
             { to: "/peers", label: "Peers" },
           ].map((item) => (
@@ -111,6 +110,18 @@ export function AppShell() {
             }
           >
             <User className="w-6 h-6" />
+          </NavLink>
+
+          <NavLink
+            to="/profile"
+            className={({ isActive }) =>
+              `flex flex-col items-center transition-colors ${
+                isActive ? "text-foreground" : "text-muted-foreground"
+              }`
+            }
+            aria-label="Profile"
+          >
+            <CircleUser className="w-6 h-6" />
           </NavLink>
         </div>
       </nav>

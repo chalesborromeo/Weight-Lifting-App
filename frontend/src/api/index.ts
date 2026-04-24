@@ -10,3 +10,4 @@ export { prsApi } from "./prs";
 export { exercisesApi } from "./exercises";
 export { notificationsApi } from "./notifications";
 export { bodyMetricsApi } from "./bodyMetrics";
+export { spottersApi } from "./spotters";

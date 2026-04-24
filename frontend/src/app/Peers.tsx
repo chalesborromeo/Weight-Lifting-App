@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { usersApi, peersApi } from "@/api";
+import { Dumbbell, Check } from "lucide-react";
+import { usersApi, peersApi, spottersApi } from "@/api";
 import type { User, Peer } from "@/types";
 import { useCurrentUser } from "@/context/CurrentUser";
 import { SectionHeader } from "@/components/SectionHeader";
@@ -52,6 +53,28 @@ export default function Peers() {
     await refresh();
   };
 
+  const [spotRequestSent, setSpotRequestSent] = useState<Record<number, boolean>>({});
+  const [spotRequestInFlight, setSpotRequestInFlight] = useState<number | null>(null);
+  const handleRequestSpot = async (peerId: number) => {
+    setSpotRequestInFlight(peerId);
+    try {
+      await spottersApi.send({ spotter_id: peerId });
+      setSpotRequestSent((prev) => ({ ...prev, [peerId]: true }));
+      // Clear the success indicator after a moment
+      setTimeout(() => {
+        setSpotRequestSent((prev) => {
+          const next = { ...prev };
+          delete next[peerId];
+          return next;
+        });
+      }, 2500);
+    } catch {
+      // Surface failure quietly; the user can retry.
+    } finally {
+      setSpotRequestInFlight(null);
+    }
+  };
+
   if (loading) return <p className="text-sm text-muted-foreground">Loading...</p>;
 
   return (
@@ -101,22 +124,41 @@ export default function Peers() {
         )}
         {peers.length > 0 && (
           <div className="bg-card rounded-[20px] divide-y divide-border">
-            {peers.map((p) => (
-              <div key={p.id} className="px-4 py-3 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-xs font-bold">
-                    {p.peer.email.charAt(0).toUpperCase()}
+            {peers.map((p) => {
+              const sent = spotRequestSent[p.peer_id];
+              const inFlight = spotRequestInFlight === p.peer_id;
+              return (
+                <div key={p.id} className="px-4 py-3 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-xs font-bold">
+                      {p.peer.email.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="text-sm text-foreground">{p.peer.email}</div>
                   </div>
-                  <div className="text-sm text-foreground">{p.peer.email}</div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleRequestSpot(p.peer_id)}
+                      disabled={inFlight || sent}
+                      aria-label={sent ? "Spot request sent" : "Request as spotter"}
+                      title="Request as spotter"
+                      className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
+                        sent
+                          ? "bg-emerald-500/10 text-emerald-400"
+                          : "bg-card border border-accent text-accent hover:bg-accent hover:text-white"
+                      } disabled:cursor-default`}
+                    >
+                      {sent ? <Check className="w-4 h-4" /> : <Dumbbell className="w-4 h-4" />}
+                    </button>
+                    <button
+                      onClick={() => handleRemove(p.peer_id)}
+                      className="px-4 py-1.5 text-xs bg-card border border-inactive text-muted-foreground rounded-full hover:border-foreground hover:text-foreground transition-colors"
+                    >
+                      Remove
+                    </button>
+                  </div>
                 </div>
-                <button
-                  onClick={() => handleRemove(p.peer_id)}
-                  className="px-4 py-1.5 text-xs bg-card border border-inactive text-muted-foreground rounded-full hover:border-foreground hover:text-foreground transition-colors"
-                >
-                  Remove
-                </button>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </section>

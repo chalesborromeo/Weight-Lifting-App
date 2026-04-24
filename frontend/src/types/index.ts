@@ -83,6 +83,20 @@ export type BodyMetric = {
   user_id: number;
 };
 
+// Spot request — matches backend schemas/spot_request.py
+export type SpotRequestCreate = {
+  spotter_id: number;
+};
+
+export type SpotRequest = {
+  id: number;
+  status: boolean; // true once accepted
+  spotter_id: number;
+  requester_id: number;
+  spotter: User;
+  requester: User;
+};
+
 // Notification — matches backend schemas/notification.py
 export type Notification = {
   id: number;
