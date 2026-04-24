@@ -28,6 +28,7 @@ class Profile(Base):
     age=Column(Integer,nullable=True)  # legacy; prefer birthdate
     gender=Column(String(20),nullable=True)
     weight=Column(Float,nullable=True)
+    goal_weight=Column(Float,nullable=True)
 
     #links profile to a user
     user_id=Column(Integer,ForeignKey("users.id"),nullable=False)

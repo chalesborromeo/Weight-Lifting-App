@@ -17,6 +17,7 @@ class ProfileCreate(BaseModel):
     age: Optional[int] = None  # legacy
     gender: Optional[str] = None
     weight: Optional[float] = None
+    goal_weight: Optional[float] = None
     gym_id: Optional[int] = None
 
 
@@ -34,6 +35,7 @@ class ProfileUpdate(BaseModel):
     age: Optional[int] = None
     gender: Optional[str] = None
     weight: Optional[float] = None
+    goal_weight: Optional[float] = None
     gym_id: Optional[int] = None
 
 
@@ -53,6 +55,7 @@ class ProfileResponse(BaseModel):
     age: Optional[int] = None
     gender: Optional[str] = None
     weight: Optional[float] = None
+    goal_weight: Optional[float] = None
     gym_id: Optional[int] = None
 
     model_config = {"from_attributes": True}

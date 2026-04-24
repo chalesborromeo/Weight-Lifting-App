@@ -38,6 +38,7 @@ export type Profile = {
   age?: number | null;
   gender?: string | null;
   weight?: number | null;
+  goal_weight?: number | null;
   gym_id?: number | null;
 };
 

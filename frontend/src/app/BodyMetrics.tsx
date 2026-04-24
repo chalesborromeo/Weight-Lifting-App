@@ -1,11 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { Plus, TrendingDown, TrendingUp, Minus } from "lucide-react";
-import { bodyMetricsApi } from "@/api";
+import { bodyMetricsApi, profileApi, ApiError } from "@/api";
 import { SectionHeader } from "@/components/SectionHeader";
-import type { BodyMetric, BodyMetricCreate } from "@/types";
+import { WeightChart } from "@/components/WeightChart";
+import { WeightGoalCard } from "@/components/WeightGoalCard";
+import type { BodyMetric, BodyMetricCreate, Profile } from "@/types";
 
 export default function BodyMetrics() {
   const [metrics, setMetrics] = useState<BodyMetric[]>([]);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
@@ -13,7 +16,16 @@ export default function BodyMetrics() {
   const load = async () => {
     setLoading(true);
     try {
-      setMetrics(await bodyMetricsApi.list());
+      const [list, prof] = await Promise.all([
+        bodyMetricsApi.list(),
+        profileApi.getMine().catch((err) => {
+          // A missing profile is fine — user just hasn't created one yet.
+          if (err instanceof ApiError && err.status === 404) return null;
+          throw err;
+        }),
+      ]);
+      setMetrics(list);
+      setProfile(prof);
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load metrics");
@@ -44,6 +56,14 @@ export default function BodyMetrics() {
   return (
     <div className="space-y-6">
       <SectionHeader title="Body Metrics" />
+
+      {/* Goal tracking — always rendered (shows form if no goal set) */}
+      <WeightGoalCard profile={profile} metrics={metrics} onProfileUpdate={setProfile} />
+
+      {/* Weight trend chart (2+ entries required) */}
+      {metrics.length > 0 && (
+        <WeightChart metrics={metrics} goalWeight={profile?.goal_weight ?? null} />
+      )}
 
       {/* Hero card of latest */}
       {latest ? (
