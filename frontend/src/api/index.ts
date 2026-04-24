@@ -6,3 +6,7 @@ export { clubsApi } from "./clubs";
 export { postsApi } from "./posts";
 export { peersApi } from "./peers";
 export { profileApi } from "./profile";
+export { prsApi } from "./prs";
+export { exercisesApi } from "./exercises";
+export { notificationsApi } from "./notifications";
+export { bodyMetricsApi } from "./bodyMetrics";

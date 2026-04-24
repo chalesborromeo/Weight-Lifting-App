@@ -1,6 +1,8 @@
 from datetime import datetime
 from pydantic import BaseModel
 
+from app.schemas.user import UserResponse
+
 
 class PRCreate(BaseModel):
     exercise_name: str
@@ -15,5 +17,6 @@ class PRResponse(BaseModel):
     reps: int
     date: datetime
     user_id: int
+    user: UserResponse
 
     model_config = {"from_attributes": True}

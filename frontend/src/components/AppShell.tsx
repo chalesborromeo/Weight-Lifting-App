@@ -1,7 +1,8 @@
 import { NavLink, Outlet } from "react-router";
-import { Heart, Plus, User } from "lucide-react";
+import { Heart, Plus, Trophy, User } from "lucide-react";
 import { useCurrentUser } from "@/context/CurrentUser";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { NotificationBell } from "@/components/NotificationBell";
 
 export function AppShell() {
   const { user } = useCurrentUser();
@@ -16,6 +17,7 @@ export function AppShell() {
           </NavLink>
           <div className="flex items-center gap-3">
             <ThemeToggle />
+            {user && <NotificationBell />}
             {user ? (
               <NavLink
                 to="/profile/edit"
@@ -40,6 +42,8 @@ export function AppShell() {
           {[
             { to: "/feed", label: "Feed" },
             { to: "/workouts", label: "Workouts" },
+            { to: "/prs", label: "PRs" },
+            { to: "/metrics", label: "Metrics" },
             { to: "/clubs", label: "Clubs" },
             { to: "/peers", label: "Peers" },
           ].map((item) => (
@@ -77,6 +81,18 @@ export function AppShell() {
             }
           >
             <Heart className="w-6 h-6" />
+          </NavLink>
+
+          <NavLink
+            to="/prs"
+            className={({ isActive }) =>
+              `flex flex-col items-center transition-colors ${
+                isActive ? "text-foreground" : "text-muted-foreground"
+              }`
+            }
+            aria-label="PRs"
+          >
+            <Trophy className="w-6 h-6" />
           </NavLink>
 
           <NavLink

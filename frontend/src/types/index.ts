@@ -43,6 +43,55 @@ export type Profile = {
 
 export type ProfileUpdate = Partial<Omit<Profile, "id" | "user_id">>;
 
+// PR — matches backend schemas/pr.py
+export type PRCreate = {
+  exercise_name: string;
+  weight: number;
+  reps: number;
+};
+
+export type PR = {
+  id: number;
+  exercise_name: string;
+  weight: number;
+  reps: number;
+  date: string;
+  user_id: number;
+  user: User;
+};
+
+// Exercise catalog — matches backend api/routes/exercises.py
+export type ExerciseCatalogEntry = {
+  name: string;
+  group: string;
+};
+
+// Body metrics — matches backend schemas/body_metric.py
+export type BodyMetricCreate = {
+  weight: number;
+  height?: number | null;
+  body_fat_pct?: number | null;
+};
+
+export type BodyMetric = {
+  id: number;
+  weight: number;
+  height?: number | null;
+  body_fat_pct?: number | null;
+  date: string;
+  user_id: number;
+};
+
+// Notification — matches backend schemas/notification.py
+export type Notification = {
+  id: number;
+  message: string;
+  type: string;
+  time: string; // ISO datetime
+  read: boolean;
+  user_id: number;
+};
+
 // Sets
 export type SetCreate = {
   weight: number;

@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router";
-import { ApiError, workoutsApi } from "@/api";
-import type { ExerciseCreate, SetCreate } from "@/types";
+import { ApiError, workoutsApi, exercisesApi } from "@/api";
+import type { ExerciseCreate, ExerciseCatalogEntry, SetCreate } from "@/types";
 import { useCurrentUser } from "@/context/CurrentUser";
 import { SectionHeader } from "@/components/SectionHeader";
+
+const EXERCISE_DATALIST_ID = "workout-exercise-catalog";
 
 type DraftSet = SetCreate;
 type DraftExercise = { name: string; sets: DraftSet[] };
@@ -21,6 +23,13 @@ export default function NewWorkout() {
   const [exercises, setExercises] = useState<DraftExercise[]>([emptyExercise()]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [workoutTypes, setWorkoutTypes] = useState<string[]>([]);
+  const [catalog, setCatalog] = useState<ExerciseCatalogEntry[]>([]);
+
+  useEffect(() => {
+    exercisesApi.workoutTypes().then(setWorkoutTypes).catch(() => setWorkoutTypes([]));
+    exercisesApi.catalog().then(setCatalog).catch(() => setCatalog([]));
+  }, []);
 
   function updateExercise(i: number, patch: Partial<DraftExercise>) {
     setExercises((prev) => prev.map((ex, idx) => (idx === i ? { ...ex, ...patch } : ex)));
@@ -78,6 +87,13 @@ export default function NewWorkout() {
     <form onSubmit={onSubmit} className="space-y-6">
       <SectionHeader title="New Workout" />
 
+      {/* Shared exercise-name autocomplete (browser-native, allows custom entries) */}
+      <datalist id={EXERCISE_DATALIST_ID}>
+        {catalog.map((ex) => (
+          <option key={ex.name} value={ex.name} label={ex.group} />
+        ))}
+      </datalist>
+
       <div className="bg-card rounded-[20px] p-6 space-y-3">
         <input
           required
@@ -86,13 +102,21 @@ export default function NewWorkout() {
           onChange={(e) => setName(e.target.value)}
           className="w-full px-4 py-3 bg-background rounded-[15px] text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-accent"
         />
-        <input
+        <select
           required
-          placeholder="Type (e.g. Strength)"
           value={type}
           onChange={(e) => setType(e.target.value)}
-          className="w-full px-4 py-3 bg-background rounded-[15px] text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-accent"
-        />
+          className="w-full px-4 py-3 bg-background rounded-[15px] text-sm text-foreground outline-none focus:ring-1 focus:ring-accent appearance-none cursor-pointer"
+        >
+          <option value="" disabled>
+            Select workout type...
+          </option>
+          {workoutTypes.map((t) => (
+            <option key={t} value={t}>
+              {t}
+            </option>
+          ))}
+        </select>
         <label className="block text-xs text-muted-foreground">
           Duration (minutes)
           <input
@@ -125,6 +149,7 @@ export default function NewWorkout() {
                 placeholder="Exercise name"
                 value={ex.name}
                 onChange={(e) => updateExercise(i, { name: e.target.value })}
+                list={EXERCISE_DATALIST_ID}
                 className="flex-1 px-4 py-3 bg-background rounded-[15px] text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-accent"
               />
               {exercises.length > 1 && (

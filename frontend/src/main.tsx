@@ -12,6 +12,8 @@ import CreateClub from "./app/CreateClub.tsx";
 import NewWorkout from "./app/NewWorkout.tsx";
 import Feed from "./app/Feed.tsx";
 import Peers from "./app/Peers.tsx";
+import PRs from "./app/PRs.tsx";
+import BodyMetrics from "./app/BodyMetrics.tsx";
 import ProfileEdit from "./app/ProfileEdit.tsx";
 import { AppShell } from "./components/AppShell.tsx";
 import { CurrentUserProvider } from "./context/CurrentUser.tsx";
@@ -36,6 +38,8 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/clubs/new" element={<CreateClub />} />
           <Route path="/clubs/:id" element={<ClubDetail />} />
           <Route path="/peers" element={<Peers />} />
+          <Route path="/prs" element={<PRs />} />
+          <Route path="/metrics" element={<BodyMetrics />} />
           <Route path="/users" element={<Users />} />
         </Route>
       </Routes>

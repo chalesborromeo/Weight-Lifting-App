@@ -18,5 +18,5 @@ class PR(Base):
     #links pr to a user
     user_id=Column(Integer,ForeignKey("users.id"),nullable=False)
 
-    #lets you do pr.user in python
-    user=relationship("User",back_populates="prs")
+    #lets you do pr.user in python (eager-loaded so leaderboard responses can serialize without re-querying)
+    user=relationship("User",back_populates="prs",lazy="joined")
