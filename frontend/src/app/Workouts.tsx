@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router";
 import { workoutsApi } from "@/api";
 import type { Workout } from "@/types";
+import { SectionHeader } from "@/components/SectionHeader";
 
 export default function Workouts() {
   const [workouts, setWorkouts] = useState<Workout[]>([]);
@@ -22,45 +22,41 @@ export default function Workouts() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl tracking-tight">Workouts</h1>
-        <Link
-          to="/workouts/new"
-          className="px-3 py-1 text-xs rounded-full bg-black text-white"
-        >
-          + New
-        </Link>
-      </div>
+      <SectionHeader title="Workouts" />
 
-      {loading && <div className="text-sm text-black/60">Loading…</div>}
-      {error && <div className="text-sm text-red-600">{error}</div>}
+      {loading && <div className="text-sm text-muted-foreground">Loading...</div>}
+      {error && <div className="text-sm text-destructive">{error}</div>}
       {!loading && workouts.length === 0 && (
-        <div className="text-sm text-black/60">No workouts yet.</div>
+        <div className="bg-card rounded-[20px] p-8 text-center">
+          <p className="text-sm text-muted-foreground">No workouts yet.</p>
+        </div>
       )}
 
-      <ul className="space-y-3">
+      <div className="space-y-3">
         {workouts.map((w) => (
-          <li key={w.id} className="border border-black/10 rounded-lg p-4">
+          <div key={w.id} className="bg-card rounded-[20px] p-4">
             <div className="flex items-baseline justify-between">
-              <div className="text-base">{w.name}</div>
-              <div className="text-xs text-black/50">#{w.id}</div>
+              <div className="text-base font-semibold text-foreground">{w.name}</div>
+              <span className="text-xs bg-accent/10 text-accent px-2.5 py-1 rounded-[15px]">
+                {w.type}
+              </span>
             </div>
-            <div className="text-xs text-black/60 mt-1">
-              {w.type} · {w.duration} min · {w.exercises.length} exercise(s)
+            <div className="text-xs text-muted-foreground mt-1">
+              {w.duration} min · {w.exercises.length} exercise(s)
             </div>
             {w.exercises.length > 0 && (
-              <ul className="mt-3 space-y-1 text-xs text-black/70">
+              <ul className="mt-3 space-y-1 text-xs">
                 {w.exercises.map((ex) => (
                   <li key={ex.id}>
-                    <span className="text-black">{ex.name}</span>
-                    <span className="text-black/50"> — {ex.sets.length} set(s)</span>
+                    <span className="text-foreground">{ex.name}</span>
+                    <span className="text-muted-foreground"> — {ex.sets.length} set(s)</span>
                   </li>
                 ))}
               </ul>
             )}
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }

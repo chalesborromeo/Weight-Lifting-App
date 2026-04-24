@@ -20,8 +20,9 @@ class UserRouter():
         self.router = APIRouter(prefix="/users", tags=["users"])
         self.router.add_api_route("/", self.get_all, methods=["GET"], response_model=list[UserResponse])
         self.router.add_api_route("/register", self.create, methods=["POST"], response_model=UserResponse)
+        self.router.add_api_route("/search", self.search, methods=["GET"], response_model=list[UserResponse])
         self.router.add_api_route("/{user_id}", self.get_one, methods=["GET"], response_model=UserResponse)
-        
+
     async def get_all(self, service:UserService = Depends(get_user_service)):
         """
         Retrieve all users
@@ -45,6 +46,12 @@ class UserRouter():
             User: The newly created user 
         """
         return service.create_user(user)
+
+    async def search(self, q: str, service:UserService = Depends(get_user_service)):
+        """
+        Search users by email substring (SRS 3.1.26 Search Peer).
+        """
+        return service.search_users(q)
 
     async def get_one(self, user_id: int, service:UserService = Depends(get_user_service)):
         """

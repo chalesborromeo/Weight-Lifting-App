@@ -1,11 +1,3 @@
-from pydantic import BaseModel
-from typing import List, Optional
-from datetime import datetime
-
-
-class CommentCreate(BaseModel):
-    user_id: int
-    post_id: int
 from datetime import datetime
 from pydantic import BaseModel
 from typing import List, Optional
@@ -43,6 +35,7 @@ class PostResponse(BaseModel):
     user_id: int
     user: UserResponse
     workout_id: Optional[int] = None
+    workout: Optional[WorkoutResponse] = None
     club_id: Optional[int] = None
     comments: List[CommentResponse] = []
 

@@ -9,4 +9,8 @@ from app.models.club import Club
 from app.models.peer import Peer
 from app.models.notification import Notification
 from app.models.spot_Request import Spot_Request
-from app.models.spot_Request import Spot_Request
+from app.models.pr import PR
+from app.models.gym import Gym
+from app.models.body_metric import BodyMetric
+from app.models.favorite_exercise import FavoriteExercise
+from app.models.report import Report

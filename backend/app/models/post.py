@@ -25,5 +25,7 @@ class Post(Base):
     #relationships
     club = relationship("Club", back_populates="posts")
     user=relationship("User",back_populates="posts")
+    workout=relationship("Workout", lazy="joined")
     comments=relationship("Comment", back_populates="post", cascade="all, delete-orphan")
+    reports=relationship("Report", back_populates="post", cascade="all, delete-orphan")
 

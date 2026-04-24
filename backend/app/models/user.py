@@ -21,3 +21,7 @@ class User(Base):
     notifications = relationship("Notification", back_populates="user", cascade="all, delete-orphan")
     clubs = relationship("Club", secondary=club_members, back_populates="members")
     owned_clubs = relationship('Club', back_populates="owner", foreign_keys="Club.owner_id", cascade="all, delete-orphan")
+    prs = relationship("PR", back_populates="user", cascade="all, delete-orphan")
+    body_metrics = relationship("BodyMetric", back_populates="user", cascade="all, delete-orphan")
+    favorite_exercises = relationship("FavoriteExercise", back_populates="user", cascade="all, delete-orphan")
+    reports = relationship("Report", back_populates="reporter", foreign_keys="Report.reporter_id", cascade="all, delete-orphan")
