@@ -1,8 +1,8 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 class SetCreate(BaseModel):
-    weight: float
-    reps: int
+    weight: float = Field(gt=0, description="Weight must be positive")
+    reps: int = Field(gt=0, description="Reps must be positive")
 
 class SetResponse(BaseModel):
     id: int

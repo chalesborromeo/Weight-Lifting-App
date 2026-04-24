@@ -45,7 +45,6 @@ class WorkoutService():
         new_workout.exercises = new_exercises
 
         self.repo.save_workout(new_workout, self.session)
-        self.session.refresh(new_workout)
         return new_workout
 
     def delete_workout(self, workout_id):
