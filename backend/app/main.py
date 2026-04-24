@@ -1,5 +1,8 @@
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.api.routes.users import UserRouter
 from app.api.routes.clubs import ClubRouter
@@ -40,3 +43,7 @@ app.include_router(FavoriteExerciseRouter().router)
 app.include_router(ReportRouter().router)
 app.include_router(NotificationRouter().router)
 app.include_router(SpotterRouter().router)
+
+UPLOADS_DIR = Path(__file__).resolve().parent.parent / "uploads"
+UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=UPLOADS_DIR), name="uploads")

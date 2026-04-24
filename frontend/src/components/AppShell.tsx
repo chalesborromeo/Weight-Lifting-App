@@ -1,16 +1,10 @@
-import { NavLink, Outlet, useNavigate } from "react-router";
+import { NavLink, Outlet } from "react-router";
 import { Heart, Plus, User } from "lucide-react";
 import { useCurrentUser } from "@/context/CurrentUser";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 export function AppShell() {
-  const { user, logout } = useCurrentUser();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    navigate("/");
-  };
+  const { user } = useCurrentUser();
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -23,9 +17,13 @@ export function AppShell() {
           <div className="flex items-center gap-3">
             <ThemeToggle />
             {user ? (
-              <button onClick={handleLogout} className="w-[50px] h-[50px] rounded-full bg-accent flex items-center justify-center text-white text-lg font-bold">
+              <NavLink
+                to="/profile/edit"
+                className="w-[50px] h-[50px] rounded-full bg-accent flex items-center justify-center text-white text-lg font-bold"
+                aria-label="Edit profile"
+              >
                 {user.email.charAt(0).toUpperCase()}
-              </button>
+              </NavLink>
             ) : (
               <NavLink
                 to="/login"

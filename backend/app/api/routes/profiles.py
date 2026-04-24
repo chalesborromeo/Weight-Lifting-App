@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, File, UploadFile
 
 from app.db.postgresql.connection import PostgreSQLConnection
 from app.db.postgresql.factory import PostgreSQLFactory
@@ -25,6 +25,7 @@ class ProfileRouter:
         self.router.add_api_route("/me", self.create_me, methods=["POST"], response_model=ProfileResponse)
         self.router.add_api_route("/me", self.update_me, methods=["PUT"], response_model=ProfileResponse)
         self.router.add_api_route("/me/gym/{gym_id}", self.set_gym, methods=["PUT"], response_model=ProfileResponse)
+        self.router.add_api_route("/me/picture", self.upload_picture, methods=["POST"], response_model=ProfileResponse)
 
     async def get_me(
         self,
@@ -56,3 +57,12 @@ class ProfileRouter:
         service: ProfileService = Depends(get_profile_service),
     ):
         return service.set_gym(user_id, gym_id)
+
+    async def upload_picture(
+        self,
+        file: UploadFile = File(...),
+        user_id: int = Depends(get_current_user_id),
+        service: ProfileService = Depends(get_profile_service),
+    ):
+        """Upload a profile picture (multipart/form-data, field name 'file'). Returns updated profile."""
+        return await service.upload_picture(user_id, file)
