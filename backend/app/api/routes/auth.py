@@ -14,7 +14,7 @@ def get_auth_service(session = Depends(get_db)):
     repo = PostgreSQLFactory.create_db_repository()
     return AuthService(repo, session)
 
-class AuthRouter():
+class AuthRouter:
     def __init__(self):
         self.router = APIRouter(prefix="/auth", tags=["auth"])
         self.router.add_api_route("/login", self.login, methods=["POST"], response_model=LoginResponse)

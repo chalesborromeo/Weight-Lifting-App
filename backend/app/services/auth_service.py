@@ -3,7 +3,7 @@ from app.core.security import create_access_token, verify_password, DUMMY_HASH, 
 from app.schemas.auth import LoginResponse, UserLogin, UserRegister
 from app.models.user import User
 
-class AuthService():
+class AuthService:
 
     def __init__(self, repo, session):
         self.repo = repo

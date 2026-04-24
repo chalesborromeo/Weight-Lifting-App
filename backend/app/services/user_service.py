@@ -21,7 +21,6 @@ class UserService():
         new_user.password = self.password_hash.hash(user.password)
 
         self.repo.save_user(new_user, self.session)
-        self.session.refresh(new_user)
         return new_user
 
     def get_user(self, user_id:int):

@@ -21,6 +21,7 @@ class CommentResponse(BaseModel):
 
 
 class PostCreate(BaseModel):
+    user_id: int
     text: Optional[str] = None
     workout_id: Optional[int] = None
     club_id: Optional[int] = None
@@ -39,3 +40,8 @@ class PostResponse(BaseModel):
     comments: List[CommentResponse] = []
 
     model_config = {"from_attributes": True}
+
+
+class PostUpdate(BaseModel):
+    text: Optional[str] = None
+    likes: Optional[int] = None

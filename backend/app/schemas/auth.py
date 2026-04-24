@@ -21,3 +21,5 @@ class LoginResponse(BaseModel):
     access_token: str
     token_type: str
     user: UserResponse
+
+    model_config = {"from_attributes" : True}

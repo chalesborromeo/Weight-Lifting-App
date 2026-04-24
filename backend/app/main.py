@@ -4,13 +4,13 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
+from app.api.routes.auth import AuthRouter
 from app.api.routes.users import UserRouter
+from app.api.routes.profiles import ProfileRouter
 from app.api.routes.clubs import ClubRouter
 from app.api.routes.workouts import WorkoutRouter
-from app.api.routes.auth import AuthRouter
 from app.api.routes.posts import PostRouter
 from app.api.routes.peers import PeerRouter
-from app.api.routes.profiles import ProfileRouter
 from app.api.routes.prs import PRRouter
 from app.api.routes.gyms import GymRouter
 from app.api.routes.body_metrics import BodyMetricRouter
