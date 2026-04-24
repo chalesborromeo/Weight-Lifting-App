@@ -22,7 +22,6 @@ class ClubService():
         new_club.privacy = club.privacy
 
         self.repo.save_club(new_club, self.session)
-        self.session.refresh(new_club)
         return new_club
     
     def join_club(self, user_id, club_id):

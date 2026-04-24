@@ -1,3 +1,11 @@
+from pydantic import BaseModel
+from typing import List, Optional
+from datetime import datetime
+
+
+class CommentCreate(BaseModel):
+    user_id: int
+    post_id: int
 from datetime import datetime
 from pydantic import BaseModel
 from typing import List, Optional
@@ -21,6 +29,7 @@ class CommentResponse(BaseModel):
 
 
 class PostCreate(BaseModel):
+    user_id: int
     text: Optional[str] = None
     workout_id: Optional[int] = None
     club_id: Optional[int] = None
@@ -38,3 +47,8 @@ class PostResponse(BaseModel):
     comments: List[CommentResponse] = []
 
     model_config = {"from_attributes": True}
+
+
+class PostUpdate(BaseModel):
+    text: Optional[str] = None
+    likes: Optional[int] = None

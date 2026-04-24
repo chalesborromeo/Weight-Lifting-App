@@ -9,3 +9,4 @@ from app.models.club import Club
 from app.models.peer import Peer
 from app.models.notification import Notification
 from app.models.spot_Request import Spot_Request
+from app.models.spot_Request import Spot_Request
