@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { ApiError, usersApi } from "@/api";
 import type { User } from "@/types";
 import { useCurrentUser } from "@/context/CurrentUser";
+import { SectionHeader } from "@/components/SectionHeader";
 
 export default function Users() {
   const { userId, register } = useCurrentUser();
@@ -47,43 +48,45 @@ export default function Users() {
   return (
     <div className="space-y-8">
       <section className="space-y-3">
-        <h1 className="text-2xl tracking-tight">Users</h1>
-        <p className="text-sm text-black/60">
+        <SectionHeader title="Users" />
+        <p className="text-sm text-muted-foreground">
           Pick a user to act as. This is a placeholder for real auth.
         </p>
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-sm uppercase tracking-wide text-black/60">Existing users</h2>
-        {loading && <div className="text-sm text-black/60">Loading…</div>}
-        {!loading && users.length === 0 && <div className="text-sm text-black/60">No users yet.</div>}
-        <ul className="divide-y divide-black/10 border border-black/10 rounded-lg">
-          {users.map((u) => (
-            <li key={u.id} className="px-4 py-3 flex items-center justify-between">
-              <div>
-                <div className="text-sm">{u.email}</div>
-                <div className="text-xs text-black/50">id #{u.id}</div>
+        <h2 className="text-sm uppercase tracking-wide text-muted-foreground">Existing users</h2>
+        {loading && <div className="text-sm text-muted-foreground">Loading...</div>}
+        {!loading && users.length === 0 && <div className="text-sm text-muted-foreground">No users yet.</div>}
+        {users.length > 0 && (
+          <div className="bg-card rounded-[20px] divide-y divide-border">
+            {users.map((u) => (
+              <div key={u.id} className="px-4 py-3 flex items-center justify-between">
+                <div>
+                  <div className="text-sm text-foreground">{u.email}</div>
+                  <div className="text-xs text-muted-foreground">id #{u.id}</div>
+                </div>
+                {userId === u.id && (
+                  <span className="px-3 py-1 text-xs rounded-full bg-accent text-white">
+                    You
+                  </span>
+                )}
               </div>
-              {userId === u.id && (
-                <span className="px-3 py-1 text-xs rounded-full bg-black text-white">
-                  You
-                </span>
-              )}
-            </li>
-          ))}
-        </ul>
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-sm uppercase tracking-wide text-black/60">Create new user</h2>
-        <form onSubmit={onCreate} className="space-y-3">
+        <h2 className="text-sm uppercase tracking-wide text-muted-foreground">Create new user</h2>
+        <form onSubmit={onCreate} className="bg-card rounded-[20px] p-6 space-y-3">
           <input
             type="email"
             required
             placeholder="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-3 py-2 border border-black/20 rounded-md text-sm"
+            className="w-full px-4 py-3 bg-background rounded-[15px] text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-accent"
           />
           <input
             type="password"
@@ -91,19 +94,19 @@ export default function Users() {
             placeholder="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-3 py-2 border border-black/20 rounded-md text-sm"
+            className="w-full px-4 py-3 bg-background rounded-[15px] text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-accent"
           />
           <button
             type="submit"
             disabled={submitting}
-            className="px-4 py-2 bg-black text-white text-sm rounded-md disabled:opacity-50"
+            className="w-full px-4 py-3 bg-accent text-white rounded-[15px] disabled:opacity-50 hover:bg-accent/90 transition-colors"
           >
-            {submitting ? "Creating…" : "Create user"}
+            {submitting ? "Creating..." : "Create user"}
           </button>
         </form>
       </section>
 
-      {error && <div className="text-sm text-red-600">{error}</div>}
+      {error && <div className="text-sm text-destructive">{error}</div>}
     </div>
   );
 }

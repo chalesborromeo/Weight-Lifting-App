@@ -1,0 +1,53 @@
+from fastapi import HTTPException, status
+
+from app.db.repositories import DBRepository
+from app.models.profile import Profile
+from app.schemas.profile import ProfileCreate, ProfileUpdate
+
+
+class ProfileService:
+    def __init__(self, repo: DBRepository, session):
+        self.repo = repo
+        self.session = session
+
+    def get_my_profile(self, user_id: int):
+        profile = self.repo.get_profile_by_user(user_id, self.session)
+        if not profile:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Profile not found")
+        return profile
+
+    def create_profile(self, user_id: int, data: ProfileCreate):
+        existing = self.repo.get_profile_by_user(user_id, self.session)
+        if existing:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Profile already exists")
+
+        profile = Profile(user_id=user_id, **data.model_dump(exclude_unset=True))
+        self.repo.save_profile(profile, self.session)
+        self.session.refresh(profile)
+        return profile
+
+    def update_profile(self, user_id: int, data: ProfileUpdate):
+        profile = self.repo.get_profile_by_user(user_id, self.session)
+        if not profile:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Profile not found")
+
+        for field, value in data.model_dump(exclude_unset=True).items():
+            setattr(profile, field, value)
+
+        self.session.flush()
+        self.session.refresh(profile)
+        return profile
+
+    def set_gym(self, user_id: int, gym_id: int):
+        gym = self.repo.get_gym(gym_id, self.session)
+        if not gym:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Gym not found")
+
+        profile = self.repo.get_profile_by_user(user_id, self.session)
+        if not profile:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Profile not found")
+
+        profile.gym_id = gym_id
+        self.session.flush()
+        self.session.refresh(profile)
+        return profile

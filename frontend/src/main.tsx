@@ -7,16 +7,20 @@ import LearnMore from "./app/LearnMore.tsx";
 import Users from "./app/Users.tsx";
 import Workouts from "./app/Workouts.tsx";
 import Clubs from "./app/Clubs.tsx";
+import ClubDetail from "./app/ClubDetail.tsx";
+import CreateClub from "./app/CreateClub.tsx";
 import NewWorkout from "./app/NewWorkout.tsx";
 import Feed from "./app/Feed.tsx";
 import Peers from "./app/Peers.tsx";
 import { AppShell } from "./components/AppShell.tsx";
 import { CurrentUserProvider } from "./context/CurrentUser.tsx";
+import { ThemeProvider } from "./context/Theme.tsx";
 import "./styles/index.css";
 
 createRoot(document.getElementById("root")!).render(
-  <CurrentUserProvider>
-    <BrowserRouter>
+  <ThemeProvider>
+    <CurrentUserProvider>
+      <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/get-started" element={<GetStarted />} />
@@ -27,10 +31,13 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/workouts" element={<Workouts />} />
           <Route path="/workouts/new" element={<NewWorkout />} />
           <Route path="/clubs" element={<Clubs />} />
+          <Route path="/clubs/new" element={<CreateClub />} />
+          <Route path="/clubs/:id" element={<ClubDetail />} />
           <Route path="/peers" element={<Peers />} />
           <Route path="/users" element={<Users />} />
         </Route>
       </Routes>
     </BrowserRouter>
-  </CurrentUserProvider>,
+  </CurrentUserProvider>
+  </ThemeProvider>,
 );

@@ -26,3 +26,6 @@ class UserService():
 
     def get_user(self, user_id:int):
         return self.repo.get_user(user_id, self.session)
+
+    def search_users(self, query: str):
+        return self.repo.search_users(query, self.session)

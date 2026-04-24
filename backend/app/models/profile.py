@@ -19,8 +19,12 @@ class Profile(Base):
     #links profile to a user
     user_id=Column(Integer,ForeignKey("users.id"),nullable=False)
 
+    #set_gym: FK to the structured Gym entity (nullable during transition from string `gym` field)
+    gym_id=Column(Integer,ForeignKey("gyms.id"),nullable=True)
+
     #lets you do profile.user in python
     user=relationship("User",back_populates="profile")
+    set_gym=relationship("Gym",back_populates="profiles")
 
 
 

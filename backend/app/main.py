@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from contextlib import asynccontextmanager
 
 from app.api.routes.users import UserRouter
 from app.api.routes.clubs import ClubRouter
@@ -8,18 +7,16 @@ from app.api.routes.workouts import WorkoutRouter
 from app.api.routes.auth import AuthRouter
 from app.api.routes.posts import PostRouter
 from app.api.routes.peers import PeerRouter
-from app.db.base import Base
-from app.db.postgresql.factory import PostgreSQLFactory
-from app import models
+from app.api.routes.profiles import ProfileRouter
+from app.api.routes.prs import PRRouter
+from app.api.routes.gyms import GymRouter
+from app.api.routes.body_metrics import BodyMetricRouter
+from app.api.routes.favorite_exercises import FavoriteExerciseRouter
+from app.api.routes.reports import ReportRouter
+from app.api.routes.notifications import NotificationRouter
+from app.api.routes.spotters import SpotterRouter
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    connection = PostgreSQLFactory.create_db_connection()
-    Base.metadata.create_all(bind=connection.engine)
-    yield
-
-
-app = FastAPI(lifespan=lifespan)
+app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
@@ -29,15 +26,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-user_router = UserRouter()
-club_router= ClubRouter()
-workout_router = WorkoutRouter()
-auth_router = AuthRouter()
-post_router = PostRouter()
-peer_router = PeerRouter()
-app.include_router(auth_router.router)
-app.include_router(user_router.router)
-app.include_router(club_router.router)
-app.include_router(workout_router.router)
-app.include_router(post_router.router)
-app.include_router(peer_router.router)
+app.include_router(AuthRouter().router)
+app.include_router(UserRouter().router)
+app.include_router(ProfileRouter().router)
+app.include_router(ClubRouter().router)
+app.include_router(WorkoutRouter().router)
+app.include_router(PostRouter().router)
+app.include_router(PeerRouter().router)
+app.include_router(PRRouter().router)
+app.include_router(GymRouter().router)
+app.include_router(BodyMetricRouter().router)
+app.include_router(FavoriteExerciseRouter().router)
+app.include_router(ReportRouter().router)
+app.include_router(NotificationRouter().router)
+app.include_router(SpotterRouter().router)

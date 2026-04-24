@@ -16,6 +16,7 @@ class Club(Base):
 
     #fields
     name=Column(String(100), nullable=False)
+    description=Column(String(500),nullable=True)
     privacy=Column(String(100),nullable=False)
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 

@@ -85,6 +85,7 @@ export type Post = {
   user_id: number;
   user: User;
   workout_id?: number;
+  workout?: Workout;
   club_id?: number;
   comments: Comment[];
 };
@@ -104,12 +105,14 @@ export type Peer = {
 export type ClubCreate = {
   owner_id: number;
   name: string;
+  description?: string;
   privacy: string;
 };
 
 export type Club = {
   id: number;
   name: string;
+  description?: string;
   owner: User;
   privacy: string;
   members: User[];

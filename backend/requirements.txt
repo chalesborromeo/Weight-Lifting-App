@@ -11,3 +11,4 @@ passlib[bcrypt]
 python-dotenv
 python-jose[cryptography]
 pwdlib[argon2]
+alembic

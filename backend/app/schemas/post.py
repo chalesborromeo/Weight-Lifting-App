@@ -34,6 +34,7 @@ class PostResponse(BaseModel):
     user_id: int
     user: UserResponse
     workout_id: Optional[int] = None
+    workout: Optional[WorkoutResponse] = None
     club_id: Optional[int] = None
     comments: List[CommentResponse] = []
 

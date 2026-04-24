@@ -9,9 +9,7 @@ class ProfileCreate(BaseModel):
     bio: Optional[str] = None
     weight: Optional[float] = None
     location: Optional[str] = None
-    goal: Optional[str] = None
-    experience: Optional[str] = None
-    days_per_week: Optional[int] = None
+    gym_id: Optional[int] = None
 
 
 class ProfileUpdate(BaseModel):
@@ -21,9 +19,7 @@ class ProfileUpdate(BaseModel):
     bio: Optional[str] = None
     weight: Optional[float] = None
     location: Optional[str] = None
-    goal: Optional[str] = None
-    experience: Optional[str] = None
-    days_per_week: Optional[int] = None
+    gym_id: Optional[int] = None
 
 
 class ProfileResponse(BaseModel):
@@ -34,8 +30,7 @@ class ProfileResponse(BaseModel):
     bio: Optional[str] = None
     weight: Optional[float] = None
     location: Optional[str] = None
-    goal: Optional[str] = None
-    experience: Optional[str] = None
-    days_per_week: Optional[int] = None
+    gym_id: Optional[int] = None
+    user_id: int
 
     model_config = {"from_attributes": True}

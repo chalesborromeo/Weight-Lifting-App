@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { usersApi, peersApi } from "@/api";
 import type { User, Peer } from "@/types";
 import { useCurrentUser } from "@/context/CurrentUser";
+import { SectionHeader } from "@/components/SectionHeader";
 
 export default function Peers() {
   const { userId } = useCurrentUser();
@@ -51,80 +52,97 @@ export default function Peers() {
     await refresh();
   };
 
-  if (loading) return <p className="text-sm text-black/60">Loading...</p>;
+  if (loading) return <p className="text-sm text-muted-foreground">Loading...</p>;
 
   return (
     <div className="space-y-8">
-      <h1 className="text-2xl tracking-tight">Peers</h1>
+      <SectionHeader title="Peers" />
 
       {/* Pending incoming */}
       {pending.length > 0 && (
         <section className="space-y-3">
-          <h2 className="text-sm uppercase tracking-wide text-black/60">Pending Requests</h2>
-          <ul className="divide-y divide-black/10 border border-black/10 rounded-lg">
+          <h2 className="text-sm uppercase tracking-wide text-muted-foreground">Pending Requests</h2>
+          <div className="bg-card rounded-[20px] divide-y divide-border">
             {pending.map((p) => (
-              <li key={p.id} className="px-4 py-3 flex items-center justify-between">
-                <div className="text-sm">{p.user.email}</div>
+              <div key={p.id} className="px-4 py-3 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-xs font-bold">
+                    {p.user.email.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="text-sm text-foreground">{p.user.email}</div>
+                </div>
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleAccept(p.user_id)}
-                    className="px-3 py-1 text-xs bg-black text-white rounded-full"
+                    className="px-4 py-1.5 text-xs bg-accent text-white rounded-full hover:bg-accent/90 transition-colors"
                   >
                     Accept
                   </button>
                   <button
                     onClick={() => handleRemove(p.user_id)}
-                    className="px-3 py-1 text-xs border border-black/20 rounded-full"
+                    className="px-4 py-1.5 text-xs bg-card border border-inactive text-muted-foreground rounded-full hover:border-foreground hover:text-foreground transition-colors"
                   >
                     Reject
                   </button>
                 </div>
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         </section>
       )}
 
       {/* Current peers */}
       <section className="space-y-3">
-        <h2 className="text-sm uppercase tracking-wide text-black/60">
+        <h2 className="text-sm uppercase tracking-wide text-muted-foreground">
           Your Peers ({peers.length})
         </h2>
         {peers.length === 0 && (
-          <p className="text-sm text-black/40">No peers yet. Add some below!</p>
+          <p className="text-sm text-muted-foreground">No peers yet. Add some below!</p>
         )}
-        <ul className="divide-y divide-black/10 border border-black/10 rounded-lg">
-          {peers.map((p) => (
-            <li key={p.id} className="px-4 py-3 flex items-center justify-between">
-              <div className="text-sm">{p.peer.email}</div>
-              <button
-                onClick={() => handleRemove(p.peer_id)}
-                className="px-3 py-1 text-xs border border-black/20 rounded-full hover:border-black"
-              >
-                Remove
-              </button>
-            </li>
-          ))}
-        </ul>
+        {peers.length > 0 && (
+          <div className="bg-card rounded-[20px] divide-y divide-border">
+            {peers.map((p) => (
+              <div key={p.id} className="px-4 py-3 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-xs font-bold">
+                    {p.peer.email.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="text-sm text-foreground">{p.peer.email}</div>
+                </div>
+                <button
+                  onClick={() => handleRemove(p.peer_id)}
+                  className="px-4 py-1.5 text-xs bg-card border border-inactive text-muted-foreground rounded-full hover:border-foreground hover:text-foreground transition-colors"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Discover */}
       {discoverable.length > 0 && (
         <section className="space-y-3">
-          <h2 className="text-sm uppercase tracking-wide text-black/60">Discover</h2>
-          <ul className="divide-y divide-black/10 border border-black/10 rounded-lg">
+          <h2 className="text-sm uppercase tracking-wide text-muted-foreground">Discover</h2>
+          <div className="bg-card rounded-[20px] divide-y divide-border">
             {discoverable.map((u) => (
-              <li key={u.id} className="px-4 py-3 flex items-center justify-between">
-                <div className="text-sm">{u.email}</div>
+              <div key={u.id} className="px-4 py-3 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-inactive text-foreground flex items-center justify-center text-xs font-bold">
+                    {u.email.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="text-sm text-foreground">{u.email}</div>
+                </div>
                 <button
                   onClick={() => handleSendRequest(u.id)}
-                  className="px-3 py-1 text-xs border border-black/20 rounded-full hover:border-black"
+                  className="px-4 py-1.5 text-xs border border-accent text-accent rounded-full hover:bg-accent hover:text-white transition-colors"
                 >
                   Add Peer
                 </button>
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         </section>
       )}
     </div>
