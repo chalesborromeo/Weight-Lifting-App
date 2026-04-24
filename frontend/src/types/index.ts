@@ -27,15 +27,12 @@ export type Profile = {
   user_id: number;
   first_name?: string | null;
   last_name?: string | null;
-  name?: string | null;
   profile_picture_url?: string | null;
   bio?: string | null;
   primary_sport?: string | null;
   location?: string | null;
   state?: string | null;
-  gym?: string | null;
   birthdate?: string | null; // ISO date YYYY-MM-DD
-  age?: number | null;
   gender?: string | null;
   weight?: number | null;
   goal_weight?: number | null;

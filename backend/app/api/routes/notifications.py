@@ -2,17 +2,11 @@ from typing import List
 
 from fastapi import APIRouter, Depends
 
-from app.db.postgresql.connection import PostgreSQLConnection
 from app.db.postgresql.factory import PostgreSQLFactory
 from app.services.notification_service import NotificationService
 from app.schemas.notification import NotificationResponse
 from app.core.security import get_current_user_id
-
-
-def get_db():
-    connection = PostgreSQLConnection.get_instance()
-    with connection.get_session() as session:
-        yield session
+from app.api.deps import get_db
 
 
 def get_notification_service(session=Depends(get_db)) -> NotificationService:

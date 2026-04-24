@@ -34,7 +34,6 @@ export default function Profile() {
 
   const displayName =
     [profile?.first_name, profile?.last_name].filter(Boolean).join(" ") ||
-    profile?.name ||
     user?.email ||
     "Your profile";
 

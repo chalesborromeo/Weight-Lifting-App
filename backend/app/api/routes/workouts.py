@@ -2,15 +2,10 @@ from typing import List
 
 from fastapi import APIRouter, Depends
 
-from app.db.postgresql.connection import PostgreSQLConnection
 from app.services.workout_service import WorkoutService
 from app.db.postgresql.factory import PostgreSQLFactory
 from app.schemas.workout import WorkoutCreate, WorkoutResponse
-
-def get_db():
-    connection = PostgreSQLConnection.get_instance()
-    with connection.get_session() as session:
-        yield session
+from app.api.deps import get_db
 
 def get_workout_service(session=Depends(get_db)) -> WorkoutService:
     repo = PostgreSQLFactory.create_db_repository()

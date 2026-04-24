@@ -3,13 +3,8 @@ from fastapi import APIRouter, Depends
 from app.schemas.user import UserCreate
 from app.services.user_service import UserService
 from app.db.postgresql.factory import PostgreSQLFactory
-from app.db.postgresql.connection import PostgreSQLConnection
 from app.schemas.user import UserResponse
-
-def get_db():
-    connection = PostgreSQLConnection.get_instance()
-    with connection.get_session() as session:
-        yield session
+from app.api.deps import get_db
 
 def get_user_service(session = Depends(get_db)) -> UserService:
     repo = PostgreSQLFactory.create_db_repository()
@@ -65,8 +60,5 @@ class UserRouter():
             User: The user record matching the given user_id
         """
         return service.get_user(user_id)
-
-
-
 
 

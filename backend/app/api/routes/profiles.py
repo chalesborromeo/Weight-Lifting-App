@@ -1,16 +1,10 @@
 from fastapi import APIRouter, Depends, File, UploadFile
 
-from app.db.postgresql.connection import PostgreSQLConnection
 from app.db.postgresql.factory import PostgreSQLFactory
 from app.services.profile_service import ProfileService
 from app.schemas.profile import ProfileCreate, ProfileUpdate, ProfileResponse
 from app.core.security import get_current_user_id
-
-
-def get_db():
-    connection = PostgreSQLConnection.get_instance()
-    with connection.get_session() as session:
-        yield session
+from app.api.deps import get_db
 
 
 def get_profile_service(session=Depends(get_db)) -> ProfileService:

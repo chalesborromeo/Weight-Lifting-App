@@ -1,14 +1,9 @@
 from fastapi import Depends, APIRouter, HTTPException
 
 from app.db.postgresql.factory import PostgreSQLFactory
-from app.db.postgresql.connection import PostgreSQLConnection
 from app.services.auth_service import AuthService
 from app.schemas.auth import LoginResponse, UserLogin, UserRegister
-
-def get_db():
-    connection = PostgreSQLConnection.get_instance()
-    with connection.get_session() as session:
-        yield session
+from app.api.deps import get_db
 
 def get_auth_service(session = Depends(get_db)):
     repo = PostgreSQLFactory.create_db_repository()

@@ -4,20 +4,15 @@ from fastapi import Depends, APIRouter
 from pydantic import BaseModel
 
 from app.services.club_service import ClubService
-from app.db.postgresql.connection import PostgreSQLConnection
 from app.db.postgresql.factory import PostgreSQLFactory
 from app.schemas.club import ClubCreate, ClubResponse
 from app.schemas.post import PostResponse
 from app.core.security import get_current_user_id
+from app.api.deps import get_db
 
 
 class ClubPostCreate(BaseModel):
     text: str
-
-def get_db():
-    connection = PostgreSQLConnection.get_instance()
-    with connection.get_session() as session:
-        yield session
 
 def get_club_service(session=Depends(get_db)) -> ClubService:
     repo = PostgreSQLFactory.create_db_repository()

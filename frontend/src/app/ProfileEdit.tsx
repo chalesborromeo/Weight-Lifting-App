@@ -1,10 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
-import { profileApi, ApiError, resolveAssetUrl } from "@/api";
-import { useCurrentUser } from "@/context/CurrentUser";
+import { profileApi, exercisesApi, ApiError, resolveAssetUrl } from "@/api";
 import type { Profile, ProfileUpdate } from "@/types";
 
-const SPORTS = ["Running", "Weightlifting", "Cycling", "Swimming", "CrossFit", "Yoga", "Other"];
 const GENDERS = ["Man", "Woman", "Non-binary", "Prefer not to say"];
 
 const formatBirthdateLabel = (iso?: string | null) => {
@@ -16,13 +14,13 @@ const formatBirthdateLabel = (iso?: string | null) => {
 
 export default function ProfileEdit() {
   const navigate = useNavigate();
-  const { logout } = useCurrentUser();
   const [form, setForm] = useState<ProfileUpdate>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploadingPicture, setUploadingPicture] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [profileExists, setProfileExists] = useState(false);
+  const [sports, setSports] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -41,6 +39,8 @@ export default function ProfileEdit() {
         setLoading(false);
       }
     })();
+    // Fetch canonical sport list from backend (shared with workout type selector)
+    exercisesApi.workoutTypes().then(setSports).catch(() => setSports([]));
   }, []);
 
   const update = <K extends keyof ProfileUpdate>(key: K, value: ProfileUpdate[K]) => {
@@ -162,7 +162,7 @@ export default function ProfileEdit() {
                 label="Primary Sport"
                 value={form.primary_sport ?? ""}
                 onChange={(v) => update("primary_sport", v)}
-                options={SPORTS}
+                options={sports}
               />
             </Group>
 
@@ -188,19 +188,6 @@ export default function ProfileEdit() {
             </Group>
 
             {error && <div className="px-6 py-4 text-sm text-destructive">{error}</div>}
-
-            <div className="px-6 pt-12">
-              <button
-                type="button"
-                onClick={() => {
-                  logout();
-                  navigate("/");
-                }}
-                className="w-full text-sm text-destructive py-3"
-              >
-                Sign out
-              </button>
-            </div>
           </>
         )}
       </main>

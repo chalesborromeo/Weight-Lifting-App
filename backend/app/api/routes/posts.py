@@ -4,22 +4,15 @@ from typing import List
 from app.schemas.post import PostCreate, PostResponse, PostUpdate, CommentCreate, CommentResponse
 from app.services.post_service import PostService
 from app.db.postgresql.factory import PostgreSQLFactory
-from app.db.postgresql.connection import PostgreSQLConnection
 from typing import List
 
 from fastapi import APIRouter, Depends
 
-from app.db.postgresql.connection import PostgreSQLConnection
 from app.db.postgresql.factory import PostgreSQLFactory
 from app.services.post_service import PostService
 from app.schemas.post import PostCreate, PostResponse, CommentCreate, CommentResponse
 from app.core.security import get_current_user_id
-
-
-def get_db():
-    connection = PostgreSQLConnection.get_instance()
-    with connection.get_session() as session:
-        yield session
+from app.api.deps import get_db
 
 
 def get_post_service(session=Depends(get_db)) -> PostService:
