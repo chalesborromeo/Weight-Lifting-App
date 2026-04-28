@@ -1,3 +1,4 @@
+from fastapi import HTTPException, status
 
 from app.db.repositories import DBRepository
 from app.schemas.user import UserCreate
@@ -16,6 +17,12 @@ class UserService():
         return self.repo.get_all_users(self.session)
 
     def create_user(self, user:UserCreate):
+        if self.repo.get_user_by_email(user.email, self.session):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email already registered",
+            )
+
         new_user = User()
         new_user.email = user.email
         new_user.password = self.password_hash.hash(user.password)
