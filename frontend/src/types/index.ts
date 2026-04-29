@@ -203,3 +203,9 @@ export type Club = {
   privacy: string;
   members: User[];
 };
+
+export type FavoriteExercise={
+  id: number;
+  name: string;
+  user_id: number;
+};
