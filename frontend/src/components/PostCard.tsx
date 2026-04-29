@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { postsApi } from "@/api/posts";
 import type { Post, Workout } from "@/types";
+import { reportsApi } from "@/api";
+
 
 function timeAgo(dateStr: string): string {
   const seconds = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
@@ -46,6 +48,8 @@ export function PostCard({ post, onUpdate, currentUserId }: Props) {
   const [showComments, setShowComments] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [liked, setLiked] = useState(false);
+  const [reported, setReported] = useState(false);
+
 
   const workout = post.workout;
   const totalSets = workout
@@ -74,6 +78,13 @@ export function PostCard({ post, onUpdate, currentUserId }: Props) {
       setSubmitting(false);
     }
   };
+
+  const handleReport = async () => {
+  if (reported || post.user.id === currentUserId) return;
+  await reportsApi.reportPost(post.id, "Inappropriate or non-fitness-related content");
+  setReported(true);
+  };
+
 
   return (
     <div className="bg-card rounded-[20px] overflow-hidden">
@@ -203,6 +214,24 @@ export function PostCard({ post, onUpdate, currentUserId }: Props) {
             {post.workout.type}
           </span>
         )}
+        {currentUserId && post.user.id !== currentUserId && (
+        <button
+          onClick={handleReport}
+          disabled={reported}
+          title={reported ? "Reported" : "Report post"}
+          className={`flex items-center gap-1.5 text-sm transition-colors ${
+            reported
+              ? "text-destructive"
+              : "text-muted-foreground hover:text-destructive"
+          }`}
+        >
+          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
+            <line x1="4" y1="22" x2="4" y2="15"/>
+          </svg>
+          {reported ? "Reported" : "Report"}
+        </button>
+      )}
       </div>
 
       {/* Comments section */}
