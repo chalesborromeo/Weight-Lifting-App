@@ -101,6 +101,15 @@ class PostgreSQLRepository(DBRepository):
             .limit(50)
             .all()
         )
+    
+    def get_all_posts(self, session):
+        return (
+        session.query(Post)
+        .order_by(Post.date.desc())
+        .limit(50)
+        .all()
+    )
+
 
     def delete_post(self, post_id, session):
         post = session.query(Post).filter(Post.id == post_id).first()
