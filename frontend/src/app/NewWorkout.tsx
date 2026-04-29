@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router";
-import { ApiError, workoutsApi, exercisesApi } from "@/api";
-import type { ExerciseCreate, ExerciseCatalogEntry, SetCreate } from "@/types";
+import { ApiError, workoutsApi, exercisesApi,favoriteExerciseApi } from "@/api";
+import type { ExerciseCreate, ExerciseCatalogEntry, SetCreate, FavoriteExercise } from "@/types";
 import { useCurrentUser } from "@/context/CurrentUser";
 import { SectionHeader } from "@/components/SectionHeader";
 
@@ -25,10 +25,12 @@ export default function NewWorkout() {
   const [error, setError] = useState<string | null>(null);
   const [workoutTypes, setWorkoutTypes] = useState<string[]>([]);
   const [catalog, setCatalog] = useState<ExerciseCatalogEntry[]>([]);
+  const [favorites,setFavorites]=useState<FavoriteExercise[]>([]);
 
   useEffect(() => {
     exercisesApi.workoutTypes().then(setWorkoutTypes).catch(() => setWorkoutTypes([]));
     exercisesApi.catalog().then(setCatalog).catch(() => setCatalog([]));
+    favoriteExerciseApi.list().then(setFavorites).catch(()=>setFavorites([]));
   }, []);
 
   function updateExercise(i: number, patch: Partial<DraftExercise>) {
@@ -43,6 +45,22 @@ export default function NewWorkout() {
           : ex,
       ),
     );
+  }
+
+  function isFavorited(name:string){
+    return favorites.some((f)=>f.name.toLowerCase()===name.toLowerCase());
+  }
+
+  async function toggleFavorite(name: string){
+    if(!name.trim()) return;
+    const existing=favorites.find((f)=>f.name.toLowerCase()===name.toLowerCase());
+    if(existing){
+      await favoriteExerciseApi.remove(existing.id);
+      setFavorites((prev)=>prev.filter((f)=>f.id!==existing.id));
+    }else{
+      const added=await favoriteExerciseApi.add(name);
+      setFavorites((prev)=>[...prev,added]);
+    }
   }
 
   async function onSubmit(e: React.FormEvent) {
@@ -152,6 +170,15 @@ export default function NewWorkout() {
                 list={EXERCISE_DATALIST_ID}
                 className="flex-1 px-4 py-3 bg-background rounded-[15px] text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-accent"
               />
+              <button
+                type="button"
+                onClick={()=>toggleFavorite(ex.name)}
+                disabled={!ex.name.trim()}
+                title={isFavorited(ex.name)? "Remove from favorites":"Add to favorites"}
+                className="text-lg px-2 text-yellow-400 disabled:opacity-30 hover:scale-110 transition-transform"
+                >
+                  {isFavorited(ex.name)?"★":"☆"}
+              </button>
               {exercises.length > 1 && (
                 <button
                   type="button"
