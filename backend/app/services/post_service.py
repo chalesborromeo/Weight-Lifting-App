@@ -179,6 +179,10 @@ class PostService:
         peer_ids = self.repo.get_accepted_peer_ids(user_id, self.session)
         feed_user_ids = [user_id] + peer_ids
         return self.repo.get_feed_posts(feed_user_ids, self.session)
+    
+    def get_all_posts(self):
+        return self.repo.get_all_posts(self.session)
+
 
     def get_post(self, post_id: int):
         post = self.repo.get_post(post_id, self.session)

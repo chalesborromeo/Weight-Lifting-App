@@ -58,6 +58,10 @@ class DBRepository(ABC):
     def get_feed_posts(self, user_ids, session): pass
 
     @abstractmethod
+    def get_all_posts(self, session): pass
+
+
+    @abstractmethod
     def delete_post(self, post_id, session): pass
 
     # Comment
