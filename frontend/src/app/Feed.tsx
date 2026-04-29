@@ -6,17 +6,24 @@ import { useCurrentUser } from "@/context/CurrentUser";
 import { PostCard } from "@/components/PostCard";
 import { SectionHeader } from "@/components/SectionHeader";
 
+
+type FeedMode = "peers" | "global";
+
 export default function Feed() {
   const { userId } = useCurrentUser();
+  const [mode, setMode] = useState<FeedMode>("peers");
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  async function refresh() {
+  async function refresh(currentMode: FeedMode) {
     setLoading(true);
     setError(null);
     try {
-      setPosts(await postsApi.getFeed());
+      const data = currentMode === "peers"
+        ? await postsApi.getFeed()
+        : await postsApi.getGlobal();
+      setPosts(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load feed");
     } finally {
@@ -25,8 +32,8 @@ export default function Feed() {
   }
 
   useEffect(() => {
-    refresh();
-  }, []);
+    refresh(mode);
+  }, [mode]);
 
   const handlePostUpdate = (updated: Post) => {
     setPosts((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));
@@ -35,6 +42,30 @@ export default function Feed() {
   return (
     <div className="space-y-4">
       <SectionHeader title="Activity Feed" />
+
+      {/* Mode toggle */}
+      <div className="flex gap-2">
+        <button
+          onClick={() => setMode("peers")}
+          className={`px-4 py-1.5 text-xs rounded-full border transition-colors ${
+            mode === "peers"
+              ? "bg-accent text-white border-accent"
+              : "border-inactive text-muted-foreground hover:border-foreground hover:text-foreground"
+          }`}
+        >
+          Peers
+        </button>
+        <button
+          onClick={() => setMode("global")}
+          className={`px-4 py-1.5 text-xs rounded-full border transition-colors ${
+            mode === "global"
+              ? "bg-accent text-white border-accent"
+              : "border-inactive text-muted-foreground hover:border-foreground hover:text-foreground"
+          }`}
+        >
+          Global
+        </button>
+      </div>
 
       {loading && (
         <div className="bg-card rounded-[20px] p-8 text-center">
@@ -49,11 +80,6 @@ export default function Feed() {
 
       {!loading && posts.length === 0 && (
         <div className="bg-card rounded-[20px] p-12 text-center space-y-4">
-          <div className="w-16 h-16 mx-auto rounded-full bg-accent/10 flex items-center justify-center">
-            <svg className="w-8 h-8 text-accent" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/>
-            </svg>
-          </div>
           <div>
             <p className="text-foreground font-medium">No activity yet</p>
             <p className="text-sm text-muted-foreground mt-1">

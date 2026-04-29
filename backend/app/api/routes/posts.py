@@ -33,6 +33,8 @@ class PostRouter:
         self.router = APIRouter(prefix="/posts", tags=["posts"])
         self.router.add_api_route("/", self.create, methods=["POST"], response_model=PostResponse)
         self.router.add_api_route("/", self.get_all, methods=["GET"], response_model=List[PostResponse])
+        self.router.add_api_route("/feed", self.get_feed, methods=["GET"], response_model=List[PostResponse])
+        self.router.add_api_route("/global", self.get_global, methods=["GET"], response_model=List[PostResponse])
         self.router.add_api_route("/{post_id}", self.get_one, methods=["GET"], response_model=PostResponse)
         self.router.add_api_route("/{post_id}", self.update, methods=["PUT"], response_model=PostResponse)
         self.router.add_api_route("/{post_id}", self.delete, methods=["DELETE"], response_model=PostResponse)
@@ -113,6 +115,19 @@ class PostRouter:
         if not comment:
             raise HTTPException(status_code=404, detail="Comment not found")
         return comment
+    
+    async def get_feed(
+        self,
+        user_id: int = Depends(get_current_user_id),
+        service: PostService = Depends(get_post_service),
+    ):
+        return service.get_feed(user_id)
+
+    async def get_global(
+        self,
+        service: PostService = Depends(get_post_service),
+    ):
+        return service.get_all_posts()
 
     async def delete_comment(self, comment_id: int, service: PostService = Depends(get_post_service)):
         """Delete a comment"""
