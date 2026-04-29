@@ -11,4 +11,5 @@ export { exercisesApi } from "./exercises";
 export { notificationsApi } from "./notifications";
 export { bodyMetricsApi } from "./bodyMetrics";
 export { spottersApi } from "./spotters";
+export { reportsApi } from "./reports";
 export {favoriteExerciseApi} from "./favoriteExercises";
