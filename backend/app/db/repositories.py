@@ -182,3 +182,16 @@ class DBRepository(ABC):
 
     @abstractmethod
     def delete_spot_request(self, spot_request_id, session): pass
+
+    # Stats
+    @abstractmethod
+    def get_workout_volume_stats(self, user_id, start_date, end_date, session): pass
+
+    @abstractmethod
+    def get_workout_volume_by_period(self, user_id, start_date, end_date, period, session): pass
+
+    @abstractmethod
+    def get_prs_in_date_range(self, user_id, start_date, end_date, session): pass
+
+    @abstractmethod
+    def get_pr_progression_by_exercise(self, user_id, exercise_name, start_date, end_date, session): pass

@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import List
+from datetime import datetime
 from app.schemas.exercise import ExerciseCreate, ExerciseResponse
 
 class WorkoutCreate(BaseModel):
@@ -14,6 +15,7 @@ class WorkoutResponse(BaseModel):
     name: str
     type: str
     duration: float
+    created_at: datetime
     exercises: List[ExerciseResponse]
 
     model_config = {"from_attributes": True}
