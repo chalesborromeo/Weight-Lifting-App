@@ -20,6 +20,7 @@ from app.api.routes.notifications import NotificationRouter
 from app.api.routes.spotters import SpotterRouter
 from app.api.routes.exercises import ExerciseRouter
 from app.api.routes.stats import StatsRouter
+from app.api.routes.suggestions import SuggestionRouter
 
 app = FastAPI()
 
@@ -47,6 +48,7 @@ app.include_router(NotificationRouter().router)
 app.include_router(SpotterRouter().router)
 app.include_router(ExerciseRouter().router)
 app.include_router(StatsRouter().router)
+app.include_router(SuggestionRouter().router)
 
 UPLOADS_DIR = Path(__file__).resolve().parent.parent / "uploads"
 UPLOADS_DIR.mkdir(parents=True, exist_ok=True)

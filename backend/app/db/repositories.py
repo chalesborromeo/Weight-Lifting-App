@@ -195,3 +195,7 @@ class DBRepository(ABC):
 
     @abstractmethod
     def get_pr_progression_by_exercise(self, user_id, exercise_name, start_date, end_date, session): pass
+
+    # Suggestions
+    @abstractmethod
+    def get_recent_exercise_performance(self, user_id, exercise_name, limit, session): pass

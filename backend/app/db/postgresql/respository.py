@@ -378,3 +378,22 @@ class PostgreSQLRepository(DBRepository):
             .order_by(PR.date.asc())
             .all()
         )
+
+    # Suggestions
+    def get_recent_exercise_performance(self, user_id, exercise_name, limit, session):
+        from app.models.exercise import Exercise
+
+        # Get recent workouts containing the specified exercise
+        workouts = (
+            session.query(Workout)
+            .join(Workout.exercises)
+            .filter(
+                Workout.user_id == user_id,
+                Exercise.name == exercise_name
+            )
+            .order_by(Workout.created_at.desc())
+            .limit(limit)
+            .all()
+        )
+
+        return workouts
