@@ -184,6 +184,29 @@ export type Peer = {
   peer: User;
 };
 
+// Favorite Exercise — matches backend schemas/favorite_exercise.py
+export type FavoriteExercise = {
+  id: number;
+  name: string;
+  user_id: number;
+};
+
+// Gym — matches backend schemas/gym.py
+export type Gym = {
+  id: number;
+  name: string;
+  address?: string | null;
+  latitude: number;
+  longitude: number;
+  hours_open?: string | null;
+  hours_close?: string | null;
+  rating?: number | null;
+};
+
+export type NearbyGym = Gym & {
+  distance_km: number;
+};
+
 // Club
 export type ClubCreate = {
   owner_id: number;

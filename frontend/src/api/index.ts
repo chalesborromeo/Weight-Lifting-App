@@ -11,3 +11,6 @@ export { exercisesApi } from "./exercises";
 export { notificationsApi } from "./notifications";
 export { bodyMetricsApi } from "./bodyMetrics";
 export { spottersApi } from "./spotters";
+export { gymsApi } from "./gyms";
+export { favoriteExercisesApi } from "./favoriteExercises";
+export { reportsApi } from "./reports";

@@ -38,7 +38,6 @@ class GymRouter:
         lat: float,
         lng: float,
         radius_km: float = 10.0,
-        _user_id: int = Depends(get_current_user_id),
         service: GymService = Depends(get_gym_service),
     ):
         """Gyms within radius_km of the given coordinates, sorted by distance (SRS 3.1.19)."""

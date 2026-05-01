@@ -15,6 +15,8 @@ import Peers from "./app/Peers.tsx";
 import PRs from "./app/PRs.tsx";
 import BodyMetrics from "./app/BodyMetrics.tsx";
 import Spotters from "./app/Spotters.tsx";
+import Gyms from "./app/Gyms.tsx";
+import FavoriteExercises from "./app/FavoriteExercises.tsx";
 import Profile from "./app/Profile.tsx";
 import ProfileEdit from "./app/ProfileEdit.tsx";
 import { AppShell } from "./components/AppShell.tsx";
@@ -45,6 +47,8 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/spotters" element={<Spotters />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/users" element={<Users />} />
+          <Route path="/gyms" element={<Gyms />} />
+          <Route path="/favorites" element={<FavoriteExercises />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { postsApi } from "@/api/posts";
+import { reportsApi } from "@/api/reports";
 import type { Post, Workout } from "@/types";
 
 function timeAgo(dateStr: string): string {
@@ -46,6 +47,10 @@ export function PostCard({ post, onUpdate, currentUserId }: Props) {
   const [showComments, setShowComments] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [liked, setLiked] = useState(false);
+  const [showReportForm, setShowReportForm] = useState(false);
+  const [reportReason, setReportReason] = useState("");
+  const [reportSubmitting, setReportSubmitting] = useState(false);
+  const [reported, setReported] = useState(false);
 
   const workout = post.workout;
   const totalSets = workout
@@ -72,6 +77,20 @@ export function PostCard({ post, onUpdate, currentUserId }: Props) {
       setShowComments(true);
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleReport = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!reportReason.trim()) return;
+    setReportSubmitting(true);
+    try {
+      await reportsApi.reportPost(post.id, reportReason.trim());
+      setReported(true);
+      setShowReportForm(false);
+      setReportReason("");
+    } finally {
+      setReportSubmitting(false);
     }
   };
 
@@ -197,6 +216,24 @@ export function PostCard({ post, onUpdate, currentUserId }: Props) {
             </svg>
             {post.comments.length > 0 && <span>{post.comments.length}</span>}
           </button>
+          {currentUserId && post.user_id !== currentUserId && (
+            <button
+              onClick={() => !reported && setShowReportForm((v) => !v)}
+              disabled={reported}
+              className={`flex items-center gap-1.5 text-sm transition-colors ${
+                reported
+                  ? "text-muted-foreground cursor-default"
+                  : "text-muted-foreground hover:text-destructive"
+              }`}
+              aria-label="Report post"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
+                <line x1="4" y1="22" x2="4" y2="15"/>
+              </svg>
+              <span className="text-xs">{reported ? "Reported" : "Report"}</span>
+            </button>
+          )}
         </div>
         {post.workout && (
           <span className="text-xs text-accent bg-accent/10 px-2.5 py-1 rounded-full uppercase tracking-wide">
@@ -204,6 +241,36 @@ export function PostCard({ post, onUpdate, currentUserId }: Props) {
           </span>
         )}
       </div>
+
+      {/* Report form */}
+      {showReportForm && (
+        <form onSubmit={handleReport} className="px-4 pb-4 border-t border-border pt-3 space-y-2">
+          <p className="text-xs text-muted-foreground">Why are you reporting this post?</p>
+          <input
+            value={reportReason}
+            onChange={(e) => setReportReason(e.target.value)}
+            placeholder="e.g. Spam, inappropriate content..."
+            autoFocus
+            className="w-full px-3 py-2 text-sm bg-background rounded-[12px] outline-none focus:ring-1 focus:ring-accent transition-colors"
+          />
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => { setShowReportForm(false); setReportReason(""); }}
+              className="flex-1 px-4 py-2 text-xs text-muted-foreground bg-background rounded-[12px]"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={!reportReason.trim() || reportSubmitting}
+              className="flex-1 px-4 py-2 text-xs font-medium bg-destructive text-white rounded-[12px] disabled:opacity-40"
+            >
+              {reportSubmitting ? "Submitting..." : "Submit Report"}
+            </button>
+          </div>
+        </form>
+      )}
 
       {/* Comments section */}
       {showComments && (
