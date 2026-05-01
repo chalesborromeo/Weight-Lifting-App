@@ -4,8 +4,9 @@ import { notificationsApi } from "@/api";
 import type { Notification } from "@/types";
 
 /**
- * Bell icon with an unread count badge and a popover list.
- * Polls on mount + on open. No real-time yet.
+ * Bell icon with a popover notification list. Lazy-fetches on open only — keeps
+ * the initial page load fast (notifications are ~500ms against Azure Postgres).
+ * Trade-off: unread badge doesn't appear until the user opens the bell once.
  */
 export function NotificationBell() {
   const [open, setOpen] = useState(false);
@@ -25,10 +26,6 @@ export function NotificationBell() {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    void load();
-  }, []);
 
   // Click-outside to close
   useEffect(() => {
