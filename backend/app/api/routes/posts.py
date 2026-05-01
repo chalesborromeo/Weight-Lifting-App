@@ -44,7 +44,12 @@ class PostRouter:
     async def get_one(self, post_id: int, service: PostService = Depends(get_post_service)):
         return service.get_post(post_id)
 
-    async def like(self, post_id: int, service: PostService = Depends(get_post_service)):
+    async def like(
+        self,
+        post_id: int,
+        _user_id: int = Depends(get_current_user_id),
+        service: PostService = Depends(get_post_service),
+    ):
         return service.like_post(post_id)
 
     async def add_comment(

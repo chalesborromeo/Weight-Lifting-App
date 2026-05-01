@@ -24,7 +24,6 @@ export default function CreateClub() {
     setError(null);
     try {
       const club = await clubsApi.create({
-        owner_id: userId,
         name: name.trim(),
         description: description.trim() || undefined,
         privacy,

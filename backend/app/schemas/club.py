@@ -5,7 +5,6 @@ from pydantic import BaseModel
 from app.schemas.user import UserResponse
 
 class ClubCreate(BaseModel):
-    owner_id: int
     name: str
     description: Optional[str] = None
     privacy: str

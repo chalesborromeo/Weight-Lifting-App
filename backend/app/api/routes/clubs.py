@@ -14,9 +14,11 @@ from app.api.deps import get_db
 class ClubPostCreate(BaseModel):
     text: str
 
+
 def get_club_service(session=Depends(get_db)) -> ClubService:
     repo = PostgreSQLFactory.create_db_repository()
     return ClubService(repo, session)
+
 
 class ClubRouter():
     def __init__(self):
@@ -33,20 +35,46 @@ class ClubRouter():
     async def get_all(self, service: ClubService = Depends(get_club_service)):
         return service.get_all_clubs()
 
-    async def create(self, club: ClubCreate, service: ClubService = Depends(get_club_service)):
-        return service.create_club(club)
-    
-    async def get_one(self, club_id:int, service: ClubService = Depends(get_club_service)):
+    async def create(
+        self,
+        club: ClubCreate,
+        user_id: int = Depends(get_current_user_id),
+        service: ClubService = Depends(get_club_service),
+    ):
+        return service.create_club(user_id, club)
+
+    async def get_one(self, club_id: int, service: ClubService = Depends(get_club_service)):
         return service.get_club(club_id)
-    
-    async def delete(self, club_id:int, service: ClubService = Depends(get_club_service)):
-        return service.delete_club(club_id)
-    
-    async def join(self, club_id:int, member_id:int, service: ClubService = Depends(get_club_service)):
-        return service.join_club(member_id, club_id)
-    
-    async def leave(self, club_id:int, member_id:int, service: ClubService = Depends(get_club_service)):
-        return service.leave_club(member_id, club_id)
+
+    async def delete(
+        self,
+        club_id: int,
+        user_id: int = Depends(get_current_user_id),
+        service: ClubService = Depends(get_club_service),
+    ):
+        return service.delete_club(user_id, club_id)
+
+    async def join(
+        self,
+        club_id: int,
+        member_id: int,
+        user_id: int = Depends(get_current_user_id),
+        service: ClubService = Depends(get_club_service),
+    ):
+        # Enforce users can only join as themselves
+        if member_id != user_id:
+            from fastapi import HTTPException, status
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot join a club on behalf of another user")
+        return service.join_club(user_id, club_id)
+
+    async def leave(
+        self,
+        club_id: int,
+        member_id: int,
+        user_id: int = Depends(get_current_user_id),
+        service: ClubService = Depends(get_club_service),
+    ):
+        return service.leave_club(user_id, member_id, club_id)
 
     async def get_feed(self, club_id: int, service: ClubService = Depends(get_club_service)):
         return service.get_club_feed(club_id)

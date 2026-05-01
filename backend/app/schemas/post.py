@@ -21,7 +21,6 @@ class CommentResponse(BaseModel):
 
 
 class PostCreate(BaseModel):
-    user_id: int
     text: Optional[str] = None
     workout_id: Optional[int] = None
     club_id: Optional[int] = None

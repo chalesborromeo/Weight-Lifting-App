@@ -209,7 +209,6 @@ export type NearbyGym = Gym & {
 
 // Club
 export type ClubCreate = {
-  owner_id: number;
   name: string;
   description?: string;
   privacy: string;
