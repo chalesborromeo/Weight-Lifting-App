@@ -49,7 +49,12 @@ node["leisure"="fitness_centre"](around:{radius_m},{lat},{lon});
 out body;
 """
     try:
-        resp = httpx.post(OVERPASS_URL, data={"data": query}, timeout=OVERPASS_TIMEOUT)
+        resp = httpx.post(
+            OVERPASS_URL,
+            data={"data": query},
+            headers={"User-Agent": "spotter-app/1.0"},
+            timeout=OVERPASS_TIMEOUT,
+        )
         resp.raise_for_status()
     except httpx.HTTPError as exc:
         raise HTTPException(
