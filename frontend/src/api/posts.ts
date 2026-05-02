@@ -12,6 +12,8 @@ export const postsApi = {
     request<Comment>(`/posts/${postId}/comments`, { method: "POST", body: { text } }),
   getComments: (postId: number) =>
     request<Comment[]>(`/posts/${postId}/comments`),
+  update: (id: number, text: string) =>
+    request<Post>(`/posts/${id}`, { method: "PATCH", body: { text } }),
   remove: (id: number) =>
     request<Post>(`/posts/${id}`, { method: "DELETE" }),
 };

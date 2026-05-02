@@ -3,7 +3,7 @@ from fastapi import HTTPException, status
 from app.db.repositories import DBRepository
 from app.models.post import Post
 from app.models.comment import Comment
-from app.schemas.post import PostCreate, CommentCreate
+from app.schemas.post import PostCreate, PostUpdate, CommentCreate
 
 
 class PostService:
@@ -66,6 +66,18 @@ class PostService:
 
     def get_comments(self, post_id: int):
         return self.repo.get_comments_for_post(post_id, self.session)
+
+    def update_post(self, post_id: int, user_id: int, data: PostUpdate):
+        post = self.repo.get_post(post_id, self.session)
+        if not post:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
+        if post.user_id != user_id:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Cannot edit another user's post")
+        if data.text is not None:
+            post.text = data.text
+        self.session.flush()
+        self.session.refresh(post)
+        return post
 
     def delete_post(self, post_id: int, user_id: int):
         post = self.repo.get_post(post_id, self.session)

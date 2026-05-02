@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 
 from app.db.postgresql.factory import PostgreSQLFactory
 from app.services.post_service import PostService
-from app.schemas.post import PostCreate, PostResponse, CommentCreate, CommentResponse
+from app.schemas.post import PostCreate, PostUpdate, PostResponse, CommentCreate, CommentResponse
 from app.core.security import get_current_user_id
 from app.api.deps import get_db
 
@@ -24,6 +24,7 @@ class PostRouter:
         self.router.add_api_route("/{post_id}/like", self.like, methods=["POST"], response_model=PostResponse)
         self.router.add_api_route("/{post_id}/comments", self.add_comment, methods=["POST"], response_model=CommentResponse)
         self.router.add_api_route("/{post_id}/comments", self.get_comments, methods=["GET"], response_model=List[CommentResponse])
+        self.router.add_api_route("/{post_id}", self.update, methods=["PATCH"], response_model=PostResponse)
         self.router.add_api_route("/{post_id}", self.delete, methods=["DELETE"], response_model=PostResponse)
 
     async def get_feed(
@@ -63,6 +64,15 @@ class PostRouter:
 
     async def get_comments(self, post_id: int, service: PostService = Depends(get_post_service)):
         return service.get_comments(post_id)
+
+    async def update(
+        self,
+        post_id: int,
+        data: PostUpdate,
+        user_id: int = Depends(get_current_user_id),
+        service: PostService = Depends(get_post_service),
+    ):
+        return service.update_post(post_id, user_id, data)
 
     async def delete(
         self,

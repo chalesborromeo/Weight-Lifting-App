@@ -56,6 +56,9 @@ export function PostCard({ post, onUpdate, currentUserId }: Props) {
   const [reportReason, setReportReason] = useState("");
   const [reportSubmitting, setReportSubmitting] = useState(false);
   const [reported, setReported] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [editText, setEditText] = useState(post.text ?? "");
+  const [editSaving, setEditSaving] = useState(false);
 
   const workout = post.workout;
   const totalSets = workout
@@ -99,6 +102,21 @@ export function PostCard({ post, onUpdate, currentUserId }: Props) {
       setReportSubmitting(false);
     }
   };
+
+  const handleEditSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editText.trim()) return;
+    setEditSaving(true);
+    try {
+      const updated = await postsApi.update(post.id, editText.trim());
+      onUpdate?.(updated);
+      setEditing(false);
+    } finally {
+      setEditSaving(false);
+    }
+  };
+
+  const isOwner = currentUserId === post.user_id;
 
   if (isPRMilestone) {
     return (
@@ -200,7 +218,7 @@ export function PostCard({ post, onUpdate, currentUserId }: Props) {
         <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center text-white text-sm font-bold shrink-0">
           {post.user.email.charAt(0).toUpperCase()}
         </div>
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <div className="text-sm font-semibold text-foreground truncate">
             {getDisplayName(post.user)}
           </div>
@@ -208,6 +226,18 @@ export function PostCard({ post, onUpdate, currentUserId }: Props) {
             {timeAgo(post.date)} ago
           </div>
         </div>
+        {isOwner && !editing && (
+          <button
+            onClick={() => { setEditText(post.text ?? ""); setEditing(true); }}
+            aria-label="Edit post"
+            className="text-muted-foreground hover:text-foreground transition-colors p-1"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+          </button>
+        )}
       </div>
 
       {/* Activity title */}
@@ -227,9 +257,37 @@ export function PostCard({ post, onUpdate, currentUserId }: Props) {
         </div>
       )}
 
-      {!workout && post.text && (
+      {!workout && (
         <div className="px-4 pb-2">
-          <p className="text-sm text-foreground">{post.text}</p>
+          {editing ? (
+            <form onSubmit={handleEditSave} className="space-y-2">
+              <textarea
+                value={editText}
+                onChange={(e) => setEditText(e.target.value)}
+                rows={3}
+                autoFocus
+                className="w-full px-3 py-2 text-sm bg-background rounded-[12px] outline-none focus:ring-1 focus:ring-accent resize-none transition-colors"
+              />
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setEditing(false)}
+                  className="flex-1 px-3 py-1.5 text-xs text-muted-foreground bg-background rounded-[12px]"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={editSaving || !editText.trim()}
+                  className="flex-1 px-3 py-1.5 text-xs font-medium bg-accent text-white rounded-[12px] disabled:opacity-40"
+                >
+                  {editSaving ? "Saving..." : "Save"}
+                </button>
+              </div>
+            </form>
+          ) : (
+            post.text && <p className="text-sm text-foreground">{post.text}</p>
+          )}
         </div>
       )}
 
