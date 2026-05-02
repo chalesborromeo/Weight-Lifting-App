@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { postsApi } from "@/api/posts";
 import { reportsApi } from "@/api/reports";
-import type { Post, Workout } from "@/types";
+import type { Post, User, Workout } from "@/types";
 
 function timeAgo(dateStr: string): string {
   const seconds = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
@@ -36,6 +36,11 @@ function formatVolume(lbs: number): string {
   return String(lbs);
 }
 
+function getDisplayName(user: User): string {
+  const name = [user.first_name, user.last_name].filter(Boolean).join(" ");
+  return name || user.email;
+}
+
 type Props = {
   post: Post;
   onUpdate?: (post: Post) => void;
@@ -57,6 +62,7 @@ export function PostCard({ post, onUpdate, currentUserId }: Props) {
     ? workout.exercises.reduce((sum, ex) => sum + ex.sets.length, 0)
     : 0;
   const volume = workout ? calcVolume(workout) : 0;
+  const isPRMilestone = post.text?.startsWith("🏆 NEW PR");
 
   const handleLike = async () => {
     if (liked) return;
@@ -94,6 +100,99 @@ export function PostCard({ post, onUpdate, currentUserId }: Props) {
     }
   };
 
+  if (isPRMilestone) {
+    return (
+      <div className="bg-card rounded-[20px] overflow-hidden border border-amber-400/40">
+        {/* PR Header */}
+        <div className="px-4 pt-4 pb-3 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-amber-400/20 flex items-center justify-center text-amber-400 text-sm font-bold shrink-0">
+            {post.user.email.charAt(0).toUpperCase()}
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="text-sm font-semibold text-foreground truncate">
+              {getDisplayName(post.user)}
+            </div>
+            <div className="text-xs text-muted-foreground">
+              {timeAgo(post.date)} ago
+            </div>
+          </div>
+          <span className="text-xs font-medium text-amber-400 bg-amber-400/10 px-2.5 py-1 rounded-full uppercase tracking-wide">
+            New PR
+          </span>
+        </div>
+
+        {/* PR Body */}
+        <div className="px-4 pb-4">
+          <div className="bg-amber-400/5 border border-amber-400/20 rounded-[15px] p-4 text-center space-y-1">
+            <div className="text-3xl">🏆</div>
+            <p className="text-base font-semibold text-foreground">{post.text?.replace("🏆 NEW PR — ", "")}</p>
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="px-4 py-2.5 border-t border-border flex items-center gap-4">
+          <button
+            onClick={handleLike}
+            className={`flex items-center gap-1.5 text-sm transition-colors ${
+              liked || post.likes > 0 ? "text-amber-400" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill={liked || post.likes > 0 ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+            {post.likes > 0 && <span>{post.likes}</span>}
+          </button>
+          <button
+            onClick={() => setShowComments(!showComments)}
+            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            {post.comments.length > 0 && <span>{post.comments.length}</span>}
+          </button>
+        </div>
+
+        {showComments && (
+          <div className="px-4 pb-4 border-t border-border pt-3 space-y-3">
+            {post.comments.length === 0 && (
+              <p className="text-xs text-muted-foreground">No comments yet. Be the first!</p>
+            )}
+            {post.comments.map((c) => (
+              <div key={c.id} className="flex gap-2">
+                <div className="w-6 h-6 rounded-full bg-inactive flex items-center justify-center text-[10px] font-bold text-foreground shrink-0 mt-0.5">
+                  {c.user.email.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <span className="text-sm font-medium text-foreground">{getDisplayName(c.user)}</span>{" "}
+                  <span className="text-sm text-muted-foreground">{c.text}</span>
+                </div>
+              </div>
+            ))}
+            {currentUserId && (
+              <form onSubmit={handleComment} className="flex gap-2 pt-1">
+                <input
+                  type="text"
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  placeholder="Add a comment..."
+                  className="flex-1 px-3 py-2 text-sm bg-background rounded-[15px] outline-none focus:ring-1 focus:ring-accent transition-colors"
+                />
+                <button
+                  type="submit"
+                  disabled={submitting || !commentText.trim()}
+                  className="px-4 py-2 text-xs font-medium bg-accent text-white rounded-[15px] disabled:opacity-30 hover:bg-accent/90 transition-colors"
+                >
+                  Post
+                </button>
+              </form>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="bg-card rounded-[20px] overflow-hidden">
       {/* Header — user info */}
@@ -103,7 +202,7 @@ export function PostCard({ post, onUpdate, currentUserId }: Props) {
         </div>
         <div className="min-w-0">
           <div className="text-sm font-semibold text-foreground truncate">
-            {post.user.email}
+            {getDisplayName(post.user)}
           </div>
           <div className="text-xs text-muted-foreground">
             {timeAgo(post.date)} ago
@@ -284,7 +383,7 @@ export function PostCard({ post, onUpdate, currentUserId }: Props) {
                 {c.user.email.charAt(0).toUpperCase()}
               </div>
               <div>
-                <span className="text-sm font-medium text-foreground">{c.user.email}</span>{" "}
+                <span className="text-sm font-medium text-foreground">{getDisplayName(c.user)}</span>{" "}
                 <span className="text-sm text-muted-foreground">{c.text}</span>
               </div>
             </div>

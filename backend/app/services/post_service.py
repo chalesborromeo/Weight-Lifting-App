@@ -32,6 +32,8 @@ class PostService:
 
     def get_feed(self, user_id: int):
         peer_ids = self.repo.get_accepted_peer_ids(user_id, self.session)
+        if not peer_ids:
+            return self.repo.get_all_posts(self.session)
         feed_user_ids = [user_id] + peer_ids
         return self.repo.get_feed_posts(feed_user_ids, self.session)
 

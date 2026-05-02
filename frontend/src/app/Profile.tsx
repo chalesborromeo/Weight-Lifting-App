@@ -8,6 +8,7 @@ import {
   Dumbbell,
 } from "lucide-react";
 import { profileApi, resolveAssetUrl, ApiError } from "@/api";
+import { usersApi } from "@/api/users";
 import { useCurrentUser } from "@/context/CurrentUser";
 import { SectionHeader } from "@/components/SectionHeader";
 import type { Profile as ProfileType } from "@/types";
@@ -16,16 +17,21 @@ export default function Profile() {
   const { user, logout } = useCurrentUser();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<ProfileType | null>(null);
+  const [streak, setStreak] = useState<number>(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
       try {
-        setProfile(await profileApi.getMine());
-      } catch (err) {
-        if (!(err instanceof ApiError && err.status === 404)) {
-          // Non-404 errors are silent; profile hub still renders with fallbacks.
-        }
+        const [p, s] = await Promise.all([
+          profileApi.getMine().catch((err) => {
+            if (!(err instanceof ApiError && err.status === 404)) throw err;
+            return null;
+          }),
+          usersApi.streak().catch(() => ({ streak: 0 })),
+        ]);
+        setProfile(p);
+        setStreak(s.streak);
       } finally {
         setLoading(false);
       }
@@ -54,7 +60,14 @@ export default function Profile() {
           )}
         </div>
         <div className="min-w-0 flex-1">
-          <div className="text-lg font-semibold text-foreground truncate">{displayName}</div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="text-lg font-semibold text-foreground truncate">{displayName}</div>
+            {streak > 0 && (
+              <span className="text-xs font-medium text-orange-400 bg-orange-400/10 px-2 py-0.5 rounded-full whitespace-nowrap">
+                🔥 {streak} day streak
+              </span>
+            )}
+          </div>
           <div className="text-xs text-muted-foreground truncate">{user?.email}</div>
           {profile?.bio && (
             <div className="text-xs text-muted-foreground mt-1 line-clamp-2">{profile.bio}</div>

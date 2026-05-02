@@ -34,6 +34,18 @@ class PostgreSQLRepository(DBRepository):
     def get_user(self, user_id, session):
         return session.query(User).filter(User.id == user_id).first()
 
+    def get_user_suggestions(self, user_id, session):
+        sent_ids = [r[0] for r in session.query(Peer.peer_id).filter(Peer.user_id == user_id)]
+        received_ids = [r[0] for r in session.query(Peer.user_id).filter(Peer.peer_id == user_id)]
+        exclude = set([user_id] + sent_ids + received_ids)
+        return (
+            session.query(User)
+            .filter(~User.id.in_(exclude))
+            .order_by(User.id.desc())
+            .limit(8)
+            .all()
+        )
+
     # Club
     def get_all_clubs(self, session):
         return session.query(Club).all()
@@ -108,6 +120,14 @@ class PostgreSQLRepository(DBRepository):
             session.delete(post)
             session.flush()
         return post
+
+    def get_all_posts(self, session):
+        return (
+            session.query(Post)
+            .order_by(Post.date.desc())
+            .limit(50)
+            .all()
+        )
 
     # Comment
     def save_comment(self, comment, session):

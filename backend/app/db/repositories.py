@@ -15,6 +15,9 @@ class DBRepository(ABC):
     @abstractmethod
     def get_user(self, user_id, session): pass
 
+    @abstractmethod
+    def get_user_suggestions(self, user_id, session): pass
+
     # Club
     @abstractmethod
     def get_all_clubs(self, session): pass
@@ -59,6 +62,9 @@ class DBRepository(ABC):
 
     @abstractmethod
     def delete_post(self, post_id, session): pass
+
+    @abstractmethod
+    def get_all_posts(self, session): pass
 
     # Comment
     @abstractmethod

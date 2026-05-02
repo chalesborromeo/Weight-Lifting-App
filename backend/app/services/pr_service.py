@@ -2,6 +2,7 @@ from fastapi import HTTPException, status
 
 from app.db.repositories import DBRepository
 from app.models.pr import PR
+from app.models.post import Post
 from app.schemas.pr import PRCreate
 
 
@@ -14,6 +15,12 @@ class PRService:
         pr = PR(user_id=user_id, **data.model_dump())
         self.repo.save_pr(pr, self.session)
         self.session.refresh(pr)
+
+        milestone = Post()
+        milestone.user_id = user_id
+        milestone.text = f"🏆 NEW PR — {data.exercise_name}: {data.weight} lbs × {data.reps} reps"
+        self.repo.save_post(milestone, self.session)
+
         return pr
 
     def list_prs(self, user_id: int):
