@@ -6,6 +6,9 @@ import {
   Pencil,
   TrendingUp,
   Dumbbell,
+  BarChart2,
+  History,
+  Lightbulb,
 } from "lucide-react";
 import { profileApi, resolveAssetUrl, ApiError } from "@/api";
 import { usersApi } from "@/api/users";
@@ -78,6 +81,9 @@ export default function Profile() {
       {/* Menu rows */}
       <nav className="bg-card rounded-[20px] divide-y divide-border overflow-hidden">
         <MenuRow to="/metrics" icon={<TrendingUp className="w-5 h-5" />} label="Body Metrics" />
+        <MenuRow to="/stats" icon={<BarChart2 className="w-5 h-5" />} label="My Stats" />
+        <MenuRow to="/exercise-history" icon={<History className="w-5 h-5" />} label="Exercise History" />
+        <MenuRow to="/suggested-workout" icon={<Lightbulb className="w-5 h-5" />} label="Suggested Workout" />
         <MenuRow to="/spotters" icon={<Dumbbell className="w-5 h-5" />} label="Spotters" />
         <MenuRow to="/profile/edit" icon={<Pencil className="w-5 h-5" />} label="Edit Profile" />
       </nav>

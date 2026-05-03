@@ -81,6 +81,10 @@ export default function Feed() {
     setPosts((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));
   };
 
+  const handlePostDelete = (postId: number) => {
+    setPosts((prev) => prev.filter((p) => p.id !== postId));
+  };
+
   const handleConnected = (connectedId: number) => {
     setSuggestions((prev) => prev.filter((u) => u.id !== connectedId));
   };
@@ -132,6 +136,7 @@ export default function Feed() {
             key={post.id}
             post={post}
             onUpdate={handlePostUpdate}
+            onDelete={handlePostDelete}
             currentUserId={userId}
           />
         ))}

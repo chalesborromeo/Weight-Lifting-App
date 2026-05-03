@@ -1,4 +1,4 @@
-import type { WorkoutStats, PeriodicVolume } from "@/types";
+import type { WorkoutStats, PeriodicVolume, PRProgression } from "@/types";
 import { request } from "./client";
 
 function fmt(d: Date) {
@@ -13,5 +13,9 @@ export const statsApi = {
   periodic: (start: Date, end: Date) =>
     request<PeriodicVolume[]>(
       `/stats/volume/periodic?start_date=${fmt(start)}&end_date=${fmt(end)}&period=week`
+    ),
+  progression: (exerciseName: string, start: Date, end: Date) =>
+    request<PRProgression>(
+      `/stats/prs/progression?exercise_name=${encodeURIComponent(exerciseName)}&start_date=${fmt(start)}&end_date=${fmt(end)}`
     ),
 };

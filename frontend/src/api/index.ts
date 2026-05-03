@@ -15,3 +15,4 @@ export { gymsApi } from "./gyms";
 export { favoriteExercisesApi } from "./favoriteExercises";
 export { reportsApi } from "./reports";
 export { statsApi } from "./stats";
+export { suggestionsApi } from "./suggestions";

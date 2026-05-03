@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends
 from app.services.workout_service import WorkoutService
 from app.db.postgresql.factory import PostgreSQLFactory
 from app.schemas.workout import WorkoutCreate, WorkoutResponse
+from app.core.security import get_current_user_id
 from app.api.deps import get_db
 
 def get_workout_service(session=Depends(get_db)) -> WorkoutService:
@@ -27,8 +28,16 @@ class WorkoutRouter():
     async def create(self, workout:WorkoutCreate, service: WorkoutService = Depends(get_workout_service)):
         return service.create_workout(workout)
 
-    async def get_users_all(self, user_id:int, service: WorkoutService = Depends(get_workout_service)):
-        return service.get_users_workouts(user_id)
+    async def get_users_all(
+        self,
+        user_id: int,
+        requester_id: int = Depends(get_current_user_id),
+        service: WorkoutService = Depends(get_workout_service),
+    ):
+        workouts = service.get_users_workouts(user_id)
+        if requester_id != user_id:
+            workouts = [w for w in workouts if w.is_public]
+        return workouts
     
     async def get_one(self, workout_id:int, service: WorkoutService = Depends(get_workout_service)):
         return service.get_workout(workout_id)

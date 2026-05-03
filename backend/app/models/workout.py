@@ -1,4 +1,4 @@
-from sqlalchemy import Column,String,Integer,ForeignKey,Float,DateTime,func
+from sqlalchemy import Column,String,Integer,ForeignKey,Float,DateTime,Boolean,func
 from sqlalchemy.orm import relationship
 from app.db.base import Base
 
@@ -13,6 +13,7 @@ class Workout(Base):
     type=Column(String(100),nullable=True)
     duration=Column(Float,nullable=True)
     created_at=Column(DateTime,server_default=func.now(),nullable=False)
+    is_public=Column(Boolean,server_default="true",nullable=False)
 
     #links workout to a user
     user_id=Column(Integer,ForeignKey("users.id"),nullable=False)

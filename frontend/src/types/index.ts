@@ -144,6 +144,8 @@ export type Workout = {
   name: string;
   type: string;
   duration: number;
+  created_at?: string;
+  is_public?: boolean;
   exercises: Exercise[];
 };
 
@@ -225,11 +227,6 @@ export type Club = {
   members: User[];
 };
 
-export type FavoriteExercise={
-  id: number;
-  name: string;
-  user_id: number;
-};
 
 // Stats — matches backend schemas/stats.py
 export type VolumeStats = {
@@ -252,4 +249,32 @@ export type PeriodicVolume = {
   total_sets: number;
   total_reps: number;
   total_volume: number;
+};
+
+// PR Progression — matches backend schemas/stats.py PRProgressionResponse
+export type PRProgression = {
+  exercise_name: string;
+  prs: PR[];
+  pr_count: number;
+  start_date: string;
+  end_date: string;
+};
+
+// Workout Suggestion — matches backend schemas/suggestion.py
+export type ExerciseSuggestion = {
+  exercise_name: string;
+  suggested_sets: number;
+  suggested_reps: number;
+  suggested_weight: number | null;
+  previous_best_weight: number | null;
+  previous_best_reps: number | null;
+  rationale: string;
+};
+
+export type WorkoutSuggestion = {
+  workout_name: string;
+  workout_type: string;
+  estimated_duration: number;
+  exercises: ExerciseSuggestion[];
+  total_exercises: number;
 };

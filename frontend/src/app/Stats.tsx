@@ -81,7 +81,7 @@ export default function Stats() {
 
           <div className="bg-card rounded-[16px] p-4 space-y-1">
             <div className="text-2xl font-bold">
-              {stats.volume.total_volume.toLocaleString()} kg
+              {stats.volume.total_volume.toLocaleString()} lbs
             </div>
             <div className="text-xs text-muted-foreground">Total Volume Lifted</div>
           </div>

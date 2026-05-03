@@ -19,6 +19,9 @@ import Gyms from "./app/Gyms.tsx";
 import FavoriteExercises from "./app/FavoriteExercises.tsx";
 import Profile from "./app/Profile.tsx";
 import ProfileEdit from "./app/ProfileEdit.tsx";
+import UserProfile from "./app/UserProfile.tsx";
+import SuggestedWorkout from "./app/SuggestedWorkout.tsx";
+import ExerciseHistory from "./app/ExerciseHistory.tsx";
 import { AppShell } from "./components/AppShell.tsx";
 import { CurrentUserProvider } from "./context/CurrentUser.tsx";
 import { ThemeProvider } from "./context/Theme.tsx";
@@ -35,9 +38,8 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/get-started" element={<GetStarted />} />
         <Route path="/login" element={<Login />} />
         <Route path="/learn-more" element={<LearnMore />} />
-        <Route path="/profile/edit" element={<ProfileEdit />} />
         <Route element={<AppShell />}>
-        <Route path="/stats" element={<Stats />} />
+          <Route path="/stats" element={<Stats />} />
           <Route path="/feed" element={<Feed />} />
           <Route path="/workouts" element={<Workouts />} />
           <Route path="/workouts/new" element={<NewWorkout />} />
@@ -49,9 +51,13 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/metrics" element={<BodyMetrics />} />
           <Route path="/spotters" element={<Spotters />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/profile/edit" element={<ProfileEdit />} />
           <Route path="/users" element={<Users />} />
+          <Route path="/users/:id" element={<UserProfile />} />
           <Route path="/gyms" element={<Gyms />} />
           <Route path="/favorites" element={<FavoriteExercises />} />
+          <Route path="/suggested-workout" element={<SuggestedWorkout />} />
+          <Route path="/exercise-history" element={<ExerciseHistory />} />
         </Route>
       </Routes>
     </BrowserRouter>

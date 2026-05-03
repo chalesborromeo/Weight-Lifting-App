@@ -20,6 +20,7 @@ export default function NewWorkout() {
   const [name, setName] = useState("");
   const [type, setType] = useState("");
   const [duration, setDuration] = useState(30);
+  const [isPublic, setIsPublic] = useState(true);
   const [exercises, setExercises] = useState<DraftExercise[]>([emptyExercise()]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -77,6 +78,7 @@ export default function NewWorkout() {
         name,
         type,
         duration,
+        is_public: isPublic,
         exercises: exercises as ExerciseCreate[],
       };
       await workoutsApi.create(payload);
@@ -145,6 +147,18 @@ export default function NewWorkout() {
             className="w-full mt-1 px-4 py-3 bg-background rounded-[15px] text-sm text-foreground outline-none focus:ring-1 focus:ring-accent"
           />
         </label>
+        <button
+          type="button"
+          onClick={() => setIsPublic((v) => !v)}
+          className={`w-full flex items-center justify-between px-4 py-3 rounded-[15px] text-sm transition-colors ${
+            isPublic ? "bg-background text-foreground" : "bg-background text-muted-foreground"
+          }`}
+        >
+          <span>{isPublic ? "🌐 Public — visible to peers" : "🔒 Private — only you can see this"}</span>
+          <span className={`w-10 h-6 rounded-full transition-colors flex items-center px-0.5 ${isPublic ? "bg-accent" : "bg-inactive"}`}>
+            <span className={`w-5 h-5 rounded-full bg-white shadow transition-transform ${isPublic ? "translate-x-4" : "translate-x-0"}`} />
+          </span>
+        </button>
       </div>
 
       <div className="space-y-4">

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router";
 import { postsApi } from "@/api/posts";
 import { reportsApi } from "@/api/reports";
 import type { Post, User, Workout } from "@/types";
@@ -44,10 +45,11 @@ function getDisplayName(user: User): string {
 type Props = {
   post: Post;
   onUpdate?: (post: Post) => void;
+  onDelete?: (postId: number) => void;
   currentUserId: number | null;
 };
 
-export function PostCard({ post, onUpdate, currentUserId }: Props) {
+export function PostCard({ post, onUpdate, onDelete, currentUserId }: Props) {
   const [commentText, setCommentText] = useState("");
   const [showComments, setShowComments] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -55,6 +57,7 @@ export function PostCard({ post, onUpdate, currentUserId }: Props) {
   const [showReportForm, setShowReportForm] = useState(false);
   const [reportReason, setReportReason] = useState("");
   const [reportSubmitting, setReportSubmitting] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [reported, setReported] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editText, setEditText] = useState(post.text ?? "");
@@ -103,6 +106,17 @@ export function PostCard({ post, onUpdate, currentUserId }: Props) {
     }
   };
 
+  const handleDelete = async () => {
+    if (!window.confirm("Delete this post?")) return;
+    setDeleting(true);
+    try {
+      await postsApi.remove(post.id);
+      onDelete?.(post.id);
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   const handleEditSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editText.trim()) return;
@@ -127,9 +141,9 @@ export function PostCard({ post, onUpdate, currentUserId }: Props) {
             {post.user.email.charAt(0).toUpperCase()}
           </div>
           <div className="min-w-0 flex-1">
-            <div className="text-sm font-semibold text-foreground truncate">
+            <Link to={`/users/${post.user.id}`} className="text-sm font-semibold text-foreground truncate hover:underline block">
               {getDisplayName(post.user)}
-            </div>
+            </Link>
             <div className="text-xs text-muted-foreground">
               {timeAgo(post.date)} ago
             </div>
@@ -227,16 +241,31 @@ export function PostCard({ post, onUpdate, currentUserId }: Props) {
           </div>
         </div>
         {isOwner && !editing && (
-          <button
-            onClick={() => { setEditText(post.text ?? ""); setEditing(true); }}
-            aria-label="Edit post"
-            className="text-muted-foreground hover:text-foreground transition-colors p-1"
-          >
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-            </svg>
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => { setEditText(post.text ?? ""); setEditing(true); }}
+              aria-label="Edit post"
+              className="text-muted-foreground hover:text-foreground transition-colors p-1"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+            </button>
+            <button
+              onClick={handleDelete}
+              disabled={deleting}
+              aria-label="Delete post"
+              className="text-muted-foreground hover:text-destructive transition-colors p-1 disabled:opacity-40"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                <path d="M10 11v6M14 11v6"/>
+                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+              </svg>
+            </button>
+          </div>
         )}
       </div>
 
