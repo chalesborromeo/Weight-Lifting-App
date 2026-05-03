@@ -1,5 +1,12 @@
-const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:8000";
+export const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:8000";
 const TOKEN_KEY = "authToken";
+
+/** Resolves a server-returned path (e.g. "/uploads/abc.jpg") into a full URL. Absolute URLs pass through. */
+export function resolveAssetUrl(path?: string | null): string | undefined {
+  if (!path) return undefined;
+  if (/^https?:\/\//i.test(path)) return path;
+  return `${API_BASE}${path}`;
+}
 
 export class ApiError extends Error {
   constructor(public status: number, public body: unknown, message: string) {
@@ -25,9 +32,11 @@ type RequestOptions = {
 
 export async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const { method = "GET", body, signal } = options;
+  const isFormData = typeof FormData !== "undefined" && body instanceof FormData;
 
   const headers: Record<string, string> = {};
-  if (body) headers["Content-Type"] = "application/json";
+  // For FormData, let the browser set Content-Type (so it includes the multipart boundary).
+  if (body && !isFormData) headers["Content-Type"] = "application/json";
 
   const token = getStoredToken();
   if (token) headers["Authorization"] = `Bearer ${token}`;
@@ -35,7 +44,7 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
   const response = await fetch(`${API_BASE}${path}`, {
     method,
     headers,
-    body: body ? JSON.stringify(body) : undefined,
+    body: body ? (isFormData ? (body as FormData) : JSON.stringify(body)) : undefined,
     signal,
   });
 

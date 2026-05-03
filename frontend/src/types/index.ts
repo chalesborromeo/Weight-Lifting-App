@@ -19,6 +19,91 @@ export type AuthResponse = {
 export type User = {
   id: number;
   email: string;
+  first_name?: string | null;
+  last_name?: string | null;
+};
+
+// Profile — matches backend schemas/profile.py
+export type Profile = {
+  id: number;
+  user_id: number;
+  first_name?: string | null;
+  last_name?: string | null;
+  profile_picture_url?: string | null;
+  bio?: string | null;
+  primary_sport?: string | null;
+  location?: string | null;
+  state?: string | null;
+  birthdate?: string | null; // ISO date YYYY-MM-DD
+  gender?: string | null;
+  weight?: number | null;
+  goal_weight?: number | null;
+  gym_id?: number | null;
+};
+
+export type ProfileUpdate = Partial<Omit<Profile, "id" | "user_id">>;
+
+// PR — matches backend schemas/pr.py
+export type PRCreate = {
+  exercise_name: string;
+  weight: number;
+  reps: number;
+};
+
+export type PR = {
+  id: number;
+  exercise_name: string;
+  weight: number;
+  reps: number;
+  date: string;
+  user_id: number;
+  user: User;
+};
+
+// Exercise catalog — matches backend api/routes/exercises.py
+export type ExerciseCatalogEntry = {
+  name: string;
+  group: string;
+};
+
+// Body metrics — matches backend schemas/body_metric.py
+export type BodyMetricCreate = {
+  weight: number;
+  height?: number | null;
+  body_fat_pct?: number | null;
+};
+
+export type BodyMetric = {
+  id: number;
+  weight: number;
+  height?: number | null;
+  body_fat_pct?: number | null;
+  date: string;
+  user_id: number;
+};
+
+// Spot request — matches backend schemas/spot_request.py
+export type SpotRequestCreate = {
+  spotter_id: number;
+};
+
+export type SpotRequest = {
+  id: number;
+  status: boolean; // true once accepted
+  spotter_id: number;
+  requester_id: number;
+  spotter: User;
+  requester: User;
+};
+
+// Notification — matches backend schemas/notification.py
+export type Notification = {
+  id: number;
+  message: string;
+  type: string;
+  time: string; // ISO datetime
+  read: boolean;
+  user_id: number;
 };
 
 // Sets
@@ -85,6 +170,7 @@ export type Post = {
   user_id: number;
   user: User;
   workout_id?: number;
+  workout?: Workout;
   club_id?: number;
   comments: Comment[];
 };
@@ -100,16 +186,40 @@ export type Peer = {
   peer: User;
 };
 
+// Favorite Exercise — matches backend schemas/favorite_exercise.py
+export type FavoriteExercise = {
+  id: number;
+  name: string;
+  user_id: number;
+};
+
+// Gym — matches backend schemas/gym.py
+export type Gym = {
+  id: number;
+  name: string;
+  address?: string | null;
+  latitude: number;
+  longitude: number;
+  hours_open?: string | null;
+  hours_close?: string | null;
+  rating?: number | null;
+};
+
+export type NearbyGym = Gym & {
+  distance_km: number;
+};
+
 // Club
 export type ClubCreate = {
-  owner_id: number;
   name: string;
+  description?: string;
   privacy: string;
 };
 
 export type Club = {
   id: number;
   name: string;
+  description?: string;
   owner: User;
   privacy: string;
   members: User[];

@@ -6,3 +6,9 @@ dist/
 
 .env
 __pycache__/
+.pytest_cache/
+*.pyc
+
+# Uploaded user content (kept locally only; .gitkeep preserves the dir)
+backend/uploads/*
+!backend/uploads/.gitkeep

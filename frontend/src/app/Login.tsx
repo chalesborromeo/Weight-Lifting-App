@@ -28,7 +28,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -36,8 +36,8 @@ export default function Login() {
         className="w-full max-w-sm space-y-8"
       >
         <div className="text-center space-y-2">
-          <h1 className="text-3xl tracking-tight text-black">SPOTTER</h1>
-          <p className="text-base text-black/60">Welcome back.</p>
+          <h1 className="text-3xl tracking-tight text-foreground">SPOTTER</h1>
+          <p className="text-base text-muted-foreground">Welcome back.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-3">
@@ -46,7 +46,7 @@ export default function Login() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email address"
-            className="w-full px-6 py-4 bg-black/5 rounded-full text-black placeholder:text-black/30 outline-none focus:ring-2 focus:ring-black/20 transition-all text-center text-lg"
+            className="w-full px-6 py-4 bg-card rounded-[15px] text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-accent/30 transition-all text-center text-lg"
             autoFocus
           />
           <input
@@ -54,30 +54,30 @@ export default function Login() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Password"
-            className="w-full px-6 py-4 bg-black/5 rounded-full text-black placeholder:text-black/30 outline-none focus:ring-2 focus:ring-black/20 transition-all text-center text-lg"
+            className="w-full px-6 py-4 bg-card rounded-[15px] text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-accent/30 transition-all text-center text-lg"
           />
 
           {error && (
-            <p className="text-red-500 text-sm text-center">{error}</p>
+            <p className="text-destructive text-sm text-center">{error}</p>
           )}
 
           <motion.button
             whileTap={{ scale: 0.97 }}
             type="submit"
             disabled={!canSubmit || submitting}
-            className={`w-full px-6 py-4 rounded-full text-base transition-all ${
+            className={`w-full px-6 py-4 rounded-[15px] text-base transition-all ${
               canSubmit && !submitting
-                ? 'bg-black text-white active:scale-95'
-                : 'bg-black/10 text-black/30 cursor-not-allowed'
+                ? 'bg-accent text-white active:scale-95'
+                : 'bg-inactive text-muted-foreground cursor-not-allowed'
             }`}
           >
             {submitting ? 'Signing in...' : 'Sign In'}
           </motion.button>
         </form>
 
-        <p className="text-center text-sm text-black/50">
+        <p className="text-center text-sm text-muted-foreground">
           Don't have an account?{' '}
-          <Link to="/get-started" className="text-black underline">
+          <Link to="/get-started" className="text-accent underline">
             Get Started
           </Link>
         </p>

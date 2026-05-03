@@ -1,4 +1,4 @@
-import type { Club, ClubCreate } from "@/types";
+import type { Club, ClubCreate, Post } from "@/types";
 import { request } from "./client";
 
 export const clubsApi = {
@@ -12,4 +12,8 @@ export const clubsApi = {
     request<Club>(`/clubs/${clubId}/member/${memberId}`, { method: "POST" }),
   leave: (clubId: number, memberId: number) =>
     request<Club>(`/clubs/${clubId}/member/${memberId}`, { method: "DELETE" }),
+  getFeed: (clubId: number) =>
+    request<Post[]>(`/clubs/${clubId}/feed`),
+  createPost: (clubId: number, text: string) =>
+    request<Post>(`/clubs/${clubId}/posts`, { method: "POST", body: { text } }),
 };

@@ -1,9 +1,11 @@
 
+from fastapi import HTTPException, status
+
 from app.core.security import create_access_token, verify_password, DUMMY_HASH, hash_password
 from app.schemas.auth import LoginResponse, UserLogin, UserRegister
 from app.models.user import User
 
-class AuthService():
+class AuthService:
 
     def __init__(self, repo, session):
         self.repo = repo
@@ -22,6 +24,14 @@ class AuthService():
         return user
     
     def register_user(self, user: UserRegister):
+        # Pre-check so we return a clean 400 instead of a 500 from the unique constraint,
+        # and skip the ~50ms argon2 hash on duplicates.
+        if self.repo.get_user_by_email(user.email, self.session):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email already registered",
+            )
+
         new_user = User()
         new_user.email = user.email
         new_user.password = hash_password(user.password)

@@ -1,5 +1,9 @@
-from fastapi.security import OAuth2PasswordBearer
+"""
+Shared FastAPI dependencies used by all routes.
+"""
+
 from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 
 from app.core.config import settings
@@ -9,17 +13,25 @@ from app.db.postgresql.factory import PostgreSQLFactory
 
 
 def get_db():
+    """DB session dependency — commits on success, rolls back on exception, closes always."""
     connection = PostgreSQLConnection.get_instance()
     with connection.get_session() as session:
         yield session
 
+
+def get_repository(session=Depends(get_db)):
+    """Concrete repository dependency."""
+    return PostgreSQLFactory.create_db_repository()
+
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
-async def get_current_user(token: str = Depends(oauth2_scheme), session = Depends(get_db)):
+
+async def get_current_user(token: str = Depends(oauth2_scheme), session=Depends(get_db)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
-        headers={"WWW-Authenticate" : "Bearer"}
+        headers={"WWW-Authenticate": "Bearer"},
     )
     repo = PostgreSQLFactory.create_db_repository()
     try:
@@ -27,7 +39,6 @@ async def get_current_user(token: str = Depends(oauth2_scheme), session = Depend
         user_id = payload.get("sub")
         if user_id is None:
             raise credentials_exception
-        
         token_data = TokenData(user_id=int(user_id))
     except JWTError:
         raise credentials_exception
@@ -35,7 +46,4 @@ async def get_current_user(token: str = Depends(oauth2_scheme), session = Depend
     user = repo.get_user(token_data.user_id, session)
     if user is None:
         raise credentials_exception
-
     return user
-
-
