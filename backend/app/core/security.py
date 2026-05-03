@@ -1,10 +1,11 @@
-from datetime import timedelta, datetime, UTC
+from datetime import timedelta, datetime, timezone
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import jwt, JWTError
 from pwdlib import PasswordHash
 from app.core.config import settings
 
+UTC = timezone.utc
 
 bearer_scheme = HTTPBearer()
 
