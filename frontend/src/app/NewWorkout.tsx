@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router";
-import { ApiError, workoutsApi, exercisesApi,favoriteExerciseApi } from "@/api";
+import { ApiError, workoutsApi, exercisesApi, favoriteExercisesApi as favoriteExerciseApi } from "@/api";
 import type { ExerciseCreate, ExerciseCatalogEntry, SetCreate, FavoriteExercise } from "@/types";
 import { useCurrentUser } from "@/context/CurrentUser";
 import { SectionHeader } from "@/components/SectionHeader";

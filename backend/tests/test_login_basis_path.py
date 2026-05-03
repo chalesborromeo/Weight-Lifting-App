@@ -138,56 +138,48 @@ class TestLoginBasisPaths:
         assert isinstance(result, LoginResponse)
         assert result.access_token == "mock_jwt_token_12345"
         assert result.token_type == "bearer"
-        assert result.user == mock_user
+        assert result.user.id == mock_user.id
+        assert result.user.email == mock_user.email
 
 
 # Integration test for the route endpoint
 class TestLoginRouteEndpoint:
 
-    @patch('app.api.routes.auth.get_auth_service')
-    def test_login_endpoint_success(self, mock_get_service):
+    def test_login_endpoint_success(self):
         """Integration test: Successful login through route endpoint"""
         from fastapi.testclient import TestClient
         from app.main import app
+        from app.api.routes.auth import get_auth_service
 
-        # Arrange
-        mock_service = Mock()
         mock_user = User()
         mock_user.id = 1
         mock_user.email = "user@example.com"
+        mock_response = LoginResponse(access_token="test_token", token_type="bearer", user=mock_user)
 
-        mock_response = LoginResponse(
-            access_token="test_token",
-            token_type="bearer",
-            user=mock_user
-        )
+        mock_service = Mock()
         mock_service.login_user.return_value = mock_response
-        mock_get_service.return_value = mock_service
 
+        app.dependency_overrides[get_auth_service] = lambda: mock_service
         client = TestClient(app)
 
-        # Act
-        response = client.post(
-            "/auth/login",
-            json={"email": "user@example.com", "password": "password123"}
-        )
+        response = client.post("/auth/login", json={"email": "user@example.com", "password": "password123"})
 
-        # Assert
+        app.dependency_overrides.clear()
+
         assert response.status_code == 200
         assert response.json()["access_token"] == "test_token"
         assert response.json()["token_type"] == "bearer"
 
-    @patch('app.api.routes.auth.get_auth_service')
-    def test_login_endpoint_invalid_credentials(self, mock_get_service):
+    def test_login_endpoint_invalid_credentials(self):
         """Integration test: Invalid credentials return 401"""
         from fastapi.testclient import TestClient
         from app.main import app
+        from app.api.routes.auth import get_auth_service
 
-        # Arrange
         mock_service = Mock()
         mock_service.login_user.return_value = None
-        mock_get_service.return_value = mock_service
 
+        app.dependency_overrides[get_auth_service] = lambda: mock_service
         client = TestClient(app)
 
         # Act
@@ -195,6 +187,8 @@ class TestLoginRouteEndpoint:
             "/auth/login",
             json={"email": "user@example.com", "password": "wrong_password"}
         )
+
+        app.dependency_overrides.clear()
 
         # Assert
         assert response.status_code == 401
