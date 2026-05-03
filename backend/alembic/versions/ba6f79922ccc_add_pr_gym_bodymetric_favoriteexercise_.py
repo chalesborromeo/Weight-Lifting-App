@@ -78,9 +78,6 @@ def upgrade() -> None:
     op.create_index(op.f('ix_reports_id'), 'reports', ['id'], unique=False)
     op.add_column('profiles', sa.Column('gym_id', sa.Integer(), nullable=True))
     op.create_foreign_key(None, 'profiles', 'gyms', ['gym_id'], ['id'])
-    op.drop_column('profiles', 'experience')
-    op.drop_column('profiles', 'goal')
-    op.drop_column('profiles', 'days_per_week')
     # ### end Alembic commands ###
 
 

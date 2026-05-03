@@ -1,9 +1,10 @@
-from datetime import timedelta, datetime, UTC
+from datetime import timedelta, datetime, timezone
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import jwt, JWTError
 from pwdlib import PasswordHash
 from app.core.config import settings
+from typing import Optional
 
 bearer_scheme = HTTPBearer()
 
@@ -17,12 +18,12 @@ def hash_password(password):
 def verify_password(plain_password, hashed_password):
     return password_hash.verify(plain_password, hashed_password)
 
-def create_access_token(data, expire_delta: timedelta | None = None):
+def create_access_token(data, expire_delta: Optional[timedelta]=None):
     to_encode = data.copy()
     if expire_delta:
-        expire = datetime.now(UTC) + expire_delta
+        expire = datetime.now(timezone.utc) + expire_delta
     else: 
-        expire = datetime.now(UTC) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+        expire = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
 
     to_encode.update({"exp" : expire})
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
