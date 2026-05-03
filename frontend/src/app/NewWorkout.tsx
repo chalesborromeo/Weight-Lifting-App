@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router";
-import { ApiError, workoutsApi, exercisesApi, favoriteExercisesApi as favoriteExerciseApi } from "@/api";
+import { ApiError, workoutsApi, exercisesApi, favoriteExercisesApi } from "@/api";
 import type { ExerciseCreate, ExerciseCatalogEntry, SetCreate, FavoriteExercise } from "@/types";
 import { useCurrentUser } from "@/context/CurrentUser";
 import { SectionHeader } from "@/components/SectionHeader";
@@ -31,7 +31,7 @@ export default function NewWorkout() {
   useEffect(() => {
     exercisesApi.workoutTypes().then(setWorkoutTypes).catch(() => setWorkoutTypes([]));
     exercisesApi.catalog().then(setCatalog).catch(() => setCatalog([]));
-    favoriteExerciseApi.list().then(setFavorites).catch(()=>setFavorites([]));
+    favoriteExercisesApi.list().then(setFavorites).catch(()=>setFavorites([]));
   }, []);
 
   function updateExercise(i: number, patch: Partial<DraftExercise>) {
@@ -56,10 +56,10 @@ export default function NewWorkout() {
     if(!name.trim()) return;
     const existing=favorites.find((f)=>f.name.toLowerCase()===name.toLowerCase());
     if(existing){
-      await favoriteExerciseApi.remove(existing.id);
+      await favoriteExercisesApi.remove(existing.id);
       setFavorites((prev)=>prev.filter((f)=>f.id!==existing.id));
     }else{
-      const added=await favoriteExerciseApi.add(name);
+      const added=await favoriteExercisesApi.add(name);
       setFavorites((prev)=>[...prev,added]);
     }
   }

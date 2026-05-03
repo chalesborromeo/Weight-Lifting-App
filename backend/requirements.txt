@@ -12,3 +12,5 @@ pwdlib[argon2]
 alembic
 python-multipart
 httpx
+pytest>=7.0.0
+pytest-mock>=3.10.0
