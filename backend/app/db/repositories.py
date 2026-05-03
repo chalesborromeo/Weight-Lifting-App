@@ -61,6 +61,10 @@ class DBRepository(ABC):
     def get_feed_posts(self, user_ids, session): pass
 
     @abstractmethod
+    def get_all_posts(self, session): pass
+
+
+    @abstractmethod
     def delete_post(self, post_id, session): pass
 
     @abstractmethod
@@ -184,3 +188,20 @@ class DBRepository(ABC):
 
     @abstractmethod
     def delete_spot_request(self, spot_request_id, session): pass
+
+    # Stats
+    @abstractmethod
+    def get_workout_volume_stats(self, user_id, start_date, end_date, session): pass
+
+    @abstractmethod
+    def get_workout_volume_by_period(self, user_id, start_date, end_date, period, session): pass
+
+    @abstractmethod
+    def get_prs_in_date_range(self, user_id, start_date, end_date, session): pass
+
+    @abstractmethod
+    def get_pr_progression_by_exercise(self, user_id, exercise_name, start_date, end_date, session): pass
+
+    # Suggestions
+    @abstractmethod
+    def get_recent_exercise_performance(self, user_id, exercise_name, limit, session): pass

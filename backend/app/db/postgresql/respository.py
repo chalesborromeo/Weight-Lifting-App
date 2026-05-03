@@ -113,6 +113,15 @@ class PostgreSQLRepository(DBRepository):
             .limit(50)
             .all()
         )
+    
+    def get_all_posts(self, session):
+        return (
+        session.query(Post)
+        .order_by(Post.date.desc())
+        .limit(50)
+        .all()
+    )
+
 
     def delete_post(self, post_id, session):
         post = session.query(Post).filter(Post.id == post_id).first()
@@ -331,3 +340,80 @@ class PostgreSQLRepository(DBRepository):
             session.delete(req)
             session.flush()
         return req
+
+    # Stats
+    def get_workout_volume_stats(self, user_id, start_date, end_date, session):
+        from sqlalchemy import func
+        from app.models.exercise import Exercise
+        from app.models.sets import Sets
+
+        result = session.query(
+            func.count(Workout.id).label('total_workouts'),
+            func.count(Sets.id).label('total_sets'),
+            func.sum(Sets.reps).label('total_reps'),
+            func.sum(Sets.weight * Sets.reps).label('total_volume')
+        ).join(Workout.exercises).join(Exercise.sets).filter(
+            Workout.user_id == user_id,
+            Workout.created_at.between(start_date, end_date)
+        ).first()
+
+        return result
+
+    def get_workout_volume_by_period(self, user_id, start_date, end_date, period, session):
+        from sqlalchemy import func
+        from app.models.exercise import Exercise
+        from app.models.sets import Sets
+
+        results = session.query(
+            func.date_trunc(period, Workout.created_at).label('period_start'),
+            func.count(Sets.id).label('total_sets'),
+            func.sum(Sets.reps).label('total_reps'),
+            func.sum(Sets.weight * Sets.reps).label('total_volume')
+        ).join(Workout.exercises).join(Exercise.sets).filter(
+            Workout.user_id == user_id,
+            Workout.created_at.between(start_date, end_date)
+        ).group_by('period_start').order_by('period_start').all()
+
+        return results
+
+    def get_prs_in_date_range(self, user_id, start_date, end_date, session):
+        return (
+            session.query(PR)
+            .filter(
+                PR.user_id == user_id,
+                PR.date.between(start_date, end_date)
+            )
+            .order_by(PR.date.asc())
+            .all()
+        )
+
+    def get_pr_progression_by_exercise(self, user_id, exercise_name, start_date, end_date, session):
+        return (
+            session.query(PR)
+            .filter(
+                PR.user_id == user_id,
+                PR.exercise_name == exercise_name,
+                PR.date.between(start_date, end_date)
+            )
+            .order_by(PR.date.asc())
+            .all()
+        )
+
+    # Suggestions
+    def get_recent_exercise_performance(self, user_id, exercise_name, limit, session):
+        from app.models.exercise import Exercise
+
+        # Get recent workouts containing the specified exercise
+        workouts = (
+            session.query(Workout)
+            .join(Workout.exercises)
+            .filter(
+                Workout.user_id == user_id,
+                Exercise.name == exercise_name
+            )
+            .order_by(Workout.created_at.desc())
+            .limit(limit)
+            .all()
+        )
+
+        return workouts

@@ -397,6 +397,24 @@ export function PostCard({ post, onUpdate, currentUserId }: Props) {
             {post.workout.type}
           </span>
         )}
+        {currentUserId && post.user.id !== currentUserId && (
+        <button
+          onClick={handleReport}
+          disabled={reported}
+          title={reported ? "Reported" : "Report post"}
+          className={`flex items-center gap-1.5 text-sm transition-colors ${
+            reported
+              ? "text-destructive"
+              : "text-muted-foreground hover:text-destructive"
+          }`}
+        >
+          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
+            <line x1="4" y1="22" x2="4" y2="15"/>
+          </svg>
+          {reported ? "Reported" : "Report"}
+        </button>
+      )}
       </div>
 
       {/* Report form */}

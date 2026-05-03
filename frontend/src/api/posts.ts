@@ -3,6 +3,7 @@ import { request } from "./client";
 
 export const postsApi = {
   getFeed: () => request<Post[]>("/posts/feed"),
+  getGlobal: () => request<Post[]>("/posts/global"),
   create: (payload: PostCreate) =>
     request<Post>("/posts/", { method: "POST", body: payload }),
   get: (id: number) => request<Post>(`/posts/${id}`),

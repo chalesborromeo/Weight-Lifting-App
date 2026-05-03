@@ -23,6 +23,8 @@ import { AppShell } from "./components/AppShell.tsx";
 import { CurrentUserProvider } from "./context/CurrentUser.tsx";
 import { ThemeProvider } from "./context/Theme.tsx";
 import "./styles/index.css";
+import Stats from "./app/Stats.tsx";
+
 
 createRoot(document.getElementById("root")!).render(
   <ThemeProvider>
@@ -35,6 +37,7 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/learn-more" element={<LearnMore />} />
         <Route path="/profile/edit" element={<ProfileEdit />} />
         <Route element={<AppShell />}>
+        <Route path="/stats" element={<Stats />} />
           <Route path="/feed" element={<Feed />} />
           <Route path="/workouts" element={<Workouts />} />
           <Route path="/workouts/new" element={<NewWorkout />} />

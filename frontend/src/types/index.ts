@@ -224,3 +224,32 @@ export type Club = {
   privacy: string;
   members: User[];
 };
+
+export type FavoriteExercise={
+  id: number;
+  name: string;
+  user_id: number;
+};
+
+// Stats — matches backend schemas/stats.py
+export type VolumeStats = {
+  total_workouts: number;
+  total_sets: number;
+  total_reps: number;
+  total_volume: number;
+  start_date: string;
+  end_date: string;
+};
+
+export type WorkoutStats = {
+  volume: VolumeStats;
+  pr_count: number;
+  prs: PR[];
+};
+
+export type PeriodicVolume = {
+  period_start: string;
+  total_sets: number;
+  total_reps: number;
+  total_volume: number;
+};
