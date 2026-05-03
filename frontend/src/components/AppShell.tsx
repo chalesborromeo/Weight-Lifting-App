@@ -45,6 +45,7 @@ export function AppShell() {
             { to: "/prs", label: "PRs" },
             { to: "/clubs", label: "Clubs" },
             { to: "/peers", label: "Peers" },
+            { to: "/stats", label: "Stats" },
           ].map((item) => (
             <NavLink
               key={item.to}
