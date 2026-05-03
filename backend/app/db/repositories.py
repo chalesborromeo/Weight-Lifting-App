@@ -133,6 +133,15 @@ class DBRepository(ABC):
     @abstractmethod
     def save_gym(self, gym, session): pass
 
+    @abstractmethod
+    def save_checkin(self, checkin, session): pass
+
+    @abstractmethod
+    def get_checkins_by_user(self, user_id, session): pass
+
+    @abstractmethod
+    def delete_checkin(self, checkin_id, user_id, session): pass
+
     # BodyMetric
     @abstractmethod
     def save_body_metric(self, metric, session): pass

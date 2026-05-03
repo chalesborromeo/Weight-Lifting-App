@@ -67,3 +67,57 @@ class UserService():
 
     def get_suggestions(self, user_id: int):
         return self.repo.get_user_suggestions(user_id, self.session)
+
+    def export_data(self, user_id: int) -> dict:
+        user = self.repo.get_user(user_id, self.session)
+        if not user:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+        profile = self.repo.get_profile_by_user(user_id, self.session)
+        workouts = self.repo.get_users_workouts(user_id, self.session)
+        prs = self.repo.get_prs_by_user(user_id, self.session)
+        metrics = self.repo.get_body_metrics_by_user(user_id, self.session)
+        favorites = self.repo.get_favorite_exercises_by_user(user_id, self.session)
+        checkins = self.repo.get_checkins_by_user(user_id, self.session)
+
+        def fmt_workout(w):
+            return {
+                "id": w.id,
+                "name": w.name,
+                "type": w.type,
+                "duration": w.duration,
+                "is_public": w.is_public,
+                "created_at": w.created_at.isoformat() if w.created_at else None,
+                "exercises": [
+                    {
+                        "name": e.name,
+                        "sets": [{"weight": s.weight, "reps": s.reps} for s in e.sets],
+                    }
+                    for e in w.exercises
+                ],
+            }
+
+        return {
+            "user": {"id": user.id, "email": user.email},
+            "profile": {
+                "first_name": profile.first_name if profile else None,
+                "last_name": profile.last_name if profile else None,
+                "bio": profile.bio if profile else None,
+            } if profile else None,
+            "workouts": [fmt_workout(w) for w in workouts],
+            "personal_records": [
+                {"exercise": p.exercise_name, "weight": p.weight, "reps": p.reps,
+                 "date": p.date.isoformat() if p.date else None}
+                for p in prs
+            ],
+            "body_metrics": [
+                {"weight": m.weight, "recorded_at": m.recorded_at.isoformat() if m.recorded_at else None}
+                for m in metrics
+            ],
+            "favorite_exercises": [f.name for f in favorites],
+            "gym_checkins": [
+                {"gym_name": c.gym_name, "gym_address": c.gym_address,
+                 "checked_in_at": c.checked_in_at.isoformat() if c.checked_in_at else None}
+                for c in checkins
+            ],
+        }

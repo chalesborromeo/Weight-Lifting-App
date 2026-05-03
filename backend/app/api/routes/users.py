@@ -20,6 +20,7 @@ class UserRouter():
         self.router.add_api_route("/register", self.create, methods=["POST"], response_model=UserResponse)
         self.router.add_api_route("/search", self.search, methods=["GET"], response_model=list[UserResponse])
         self.router.add_api_route("/me/streak", self.get_streak, methods=["GET"])
+        self.router.add_api_route("/me/export", self.export, methods=["GET"])
         self.router.add_api_route("/suggestions", self.get_suggestions, methods=["GET"], response_model=list[UserResponse])
         self.router.add_api_route("/{user_id}", self.get_one, methods=["GET"], response_model=UserResponse)
 
@@ -45,6 +46,13 @@ class UserRouter():
         service: UserService = Depends(get_user_service),
     ):
         return service.get_suggestions(user_id)
+
+    async def export(
+        self,
+        user_id: int = Depends(get_current_user_id),
+        service: UserService = Depends(get_user_service),
+    ):
+        return service.export_data(user_id)
 
     async def get_one(self, user_id: int, service: UserService = Depends(get_user_service)):
         return service.get_user(user_id)

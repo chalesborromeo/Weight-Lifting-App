@@ -25,3 +25,4 @@ class User(Base):
     body_metrics = relationship("BodyMetric", back_populates="user", cascade="all, delete-orphan")
     favorite_exercises = relationship("FavoriteExercise", back_populates="user", cascade="all, delete-orphan")
     reports = relationship("Report", back_populates="reporter", foreign_keys="Report.reporter_id", cascade="all, delete-orphan")
+    checkins = relationship("GymCheckIn", back_populates="user", cascade="all, delete-orphan")

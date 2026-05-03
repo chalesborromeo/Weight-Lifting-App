@@ -9,6 +9,7 @@ import {
   BarChart2,
   History,
   Lightbulb,
+  Download,
 } from "lucide-react";
 import { profileApi, resolveAssetUrl, ApiError } from "@/api";
 import { usersApi } from "@/api/users";
@@ -40,6 +41,17 @@ export default function Profile() {
       }
     })();
   }, []);
+
+  const handleExport = async () => {
+    const data = await usersApi.exportData();
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "spotter-data.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   const displayName =
     [profile?.first_name, profile?.last_name].filter(Boolean).join(" ") ||
@@ -86,6 +98,15 @@ export default function Profile() {
         <MenuRow to="/suggested-workout" icon={<Lightbulb className="w-5 h-5" />} label="Suggested Workout" />
         <MenuRow to="/spotters" icon={<Dumbbell className="w-5 h-5" />} label="Spotters" />
         <MenuRow to="/profile/edit" icon={<Pencil className="w-5 h-5" />} label="Edit Profile" />
+        <button
+          type="button"
+          onClick={handleExport}
+          className="w-full flex items-center gap-3 px-4 py-4 hover:bg-background/50 transition-colors text-left"
+        >
+          <span className="text-muted-foreground"><Download className="w-5 h-5" /></span>
+          <span className="flex-1 text-foreground">Export My Data</span>
+          <ChevronRight className="w-4 h-4 text-muted-foreground" />
+        </button>
       </nav>
 
       <button

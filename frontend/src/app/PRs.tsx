@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Plus, Trash2, Trophy } from "lucide-react";
-import { prsApi, exercisesApi } from "@/api";
+import { Plus, Trash2, Trophy, Share2 } from "lucide-react";
+import { prsApi, exercisesApi, postsApi } from "@/api";
 import { useCurrentUser } from "@/context/CurrentUser";
 import { SectionHeader } from "@/components/SectionHeader";
 import type { PR, PRCreate, ExerciseCatalogEntry } from "@/types";
@@ -206,6 +206,22 @@ function AddPRForm({ onCreated }: { onCreated: (pr: PR) => void }) {
 }
 
 function PRCard({ pr, onDelete }: { pr: PR; onDelete: () => void }) {
+  const [sharing, setSharing] = useState(false);
+  const [shared, setShared] = useState(false);
+
+  const handleShare = async () => {
+    setSharing(true);
+    try {
+      await postsApi.create({
+        text: `🏆 New PR! ${pr.exercise_name} — ${pr.weight} lbs × ${pr.reps} reps`,
+      });
+      setShared(true);
+      setTimeout(() => setShared(false), 3000);
+    } finally {
+      setSharing(false);
+    }
+  };
+
   return (
     <div className="bg-card rounded-[20px] p-4 flex items-center justify-between">
       <div>
@@ -214,13 +230,24 @@ function PRCard({ pr, onDelete }: { pr: PR; onDelete: () => void }) {
           {pr.weight} lbs × {pr.reps} · {new Date(pr.date).toLocaleDateString()}
         </div>
       </div>
-      <button
-        onClick={onDelete}
-        className="text-muted-foreground hover:text-destructive transition-colors p-2"
-        aria-label="Delete PR"
-      >
-        <Trash2 className="w-4 h-4" />
-      </button>
+      <div className="flex items-center gap-1">
+        <button
+          onClick={handleShare}
+          disabled={sharing || shared}
+          className={`p-2 transition-colors ${shared ? "text-green-500" : "text-muted-foreground hover:text-accent"}`}
+          aria-label="Share to feed"
+          title="Share to feed"
+        >
+          <Share2 className="w-4 h-4" />
+        </button>
+        <button
+          onClick={onDelete}
+          className="text-muted-foreground hover:text-destructive transition-colors p-2"
+          aria-label="Delete PR"
+        >
+          <Trash2 className="w-4 h-4" />
+        </button>
+      </div>
     </div>
   );
 }

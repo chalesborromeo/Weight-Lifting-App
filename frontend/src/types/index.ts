@@ -211,6 +211,13 @@ export type NearbyGym = Gym & {
   distance_km: number;
 };
 
+export type GymCheckIn = {
+  id: number;
+  gym_name: string;
+  gym_address?: string | null;
+  checked_in_at: string;
+};
+
 // Club
 export type ClubCreate = {
   name: string;

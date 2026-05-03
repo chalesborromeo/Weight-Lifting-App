@@ -15,6 +15,7 @@ from app.models.favorite_exercise import FavoriteExercise
 from app.models.report import Report
 from app.models.notification import Notification
 from app.models.spot_Request import Spot_Request
+from app.models.gym_checkin import GymCheckIn
 
 
 class PostgreSQLRepository(DBRepository):
@@ -239,6 +240,30 @@ class PostgreSQLRepository(DBRepository):
         session.add(gym)
         session.flush()
         return gym
+
+    def save_checkin(self, checkin, session):
+        session.add(checkin)
+        session.flush()
+        return checkin
+
+    def get_checkins_by_user(self, user_id, session):
+        return (
+            session.query(GymCheckIn)
+            .filter(GymCheckIn.user_id == user_id)
+            .order_by(desc(GymCheckIn.checked_in_at))
+            .all()
+        )
+
+    def delete_checkin(self, checkin_id, user_id, session):
+        checkin = (
+            session.query(GymCheckIn)
+            .filter(GymCheckIn.id == checkin_id, GymCheckIn.user_id == user_id)
+            .first()
+        )
+        if checkin:
+            session.delete(checkin)
+            session.flush()
+        return checkin
 
     # BodyMetric
     def save_body_metric(self, metric, session):

@@ -6,7 +6,8 @@ from fastapi import HTTPException, status
 
 from app.db.repositories import DBRepository
 from app.models.gym import Gym
-from app.schemas.gym import GymCreate
+from app.models.gym_checkin import GymCheckIn
+from app.schemas.gym import GymCreate, GymCheckInCreate
 
 OVERPASS_URL = "https://overpass-api.de/api/interpreter"
 OVERPASS_TIMEOUT = 15  # seconds
@@ -116,3 +117,18 @@ class GymService:
         ]
         results.sort(key=lambda g: g["distance_km"])
         return results
+
+    def checkin(self, user_id: int, data: GymCheckInCreate):
+        checkin = GymCheckIn(user_id=user_id, gym_name=data.gym_name, gym_address=data.gym_address)
+        self.repo.save_checkin(checkin, self.session)
+        self.session.refresh(checkin)
+        return checkin
+
+    def list_checkins(self, user_id: int):
+        return self.repo.get_checkins_by_user(user_id, self.session)
+
+    def delete_checkin(self, checkin_id: int, user_id: int):
+        checkin = self.repo.delete_checkin(checkin_id, user_id, self.session)
+        if not checkin:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Check-in not found")
+        return checkin
