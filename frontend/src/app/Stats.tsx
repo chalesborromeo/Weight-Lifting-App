@@ -121,7 +121,7 @@ export default function Stats() {
                 >
                   <span className="text-sm font-medium">{pr.exercise_name}</span>
                   <span className="text-sm text-muted-foreground">
-                    {pr.weight} kg × {pr.reps}
+                    {pr.weight} lbs × {pr.reps}
                   </span>
                 </div>
               ))}

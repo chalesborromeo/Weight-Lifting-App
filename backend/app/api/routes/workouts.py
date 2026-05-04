@@ -42,6 +42,6 @@ class WorkoutRouter():
     async def get_one(self, workout_id:int, service: WorkoutService = Depends(get_workout_service)):
         return service.get_workout(workout_id)
     
-    async def delete(self, workout_id:int, service: WorkoutService = Depends(get_workout_service)):
-        return service.delete_workout(workout_id)
+    async def delete(self, workout_id: int, user_id: int = Depends(get_current_user_id), service: WorkoutService = Depends(get_workout_service)):
+        return service.delete_workout(workout_id, user_id)
 

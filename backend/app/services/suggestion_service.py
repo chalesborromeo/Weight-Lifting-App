@@ -38,8 +38,9 @@ class SuggestionService:
         # Estimate duration: ~10-15 min per exercise
         estimated_duration = len(exercise_suggestions) * 12.5
 
+        day = datetime.now().strftime("%A")
         return WorkoutSuggestion(
-            workout_name=f"Suggested Workout - {datetime.now().strftime('%b %d')}",
+            workout_name=f"{day} Workout",
             workout_type="Personalized",
             estimated_duration=estimated_duration,
             exercises=exercise_suggestions,

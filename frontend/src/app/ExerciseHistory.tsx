@@ -145,12 +145,12 @@ export default function ExerciseHistory() {
                     </div>
 
                     {/* Mini bar chart */}
-                    <div className="flex items-end gap-1.5 h-10">
+                    <div className="flex items-end gap-1.5" style={{ height: 40 }}>
                       {exercise.sets.map((set, i) => (
                         <div
                           key={i}
                           className="flex-1 bg-accent/70 rounded-t-[3px] relative group"
-                          style={{ height: `${(set.weight / maxWeight) * 100}%`, minHeight: "4px" }}
+                          style={{ height: Math.max(4, (set.weight / maxWeight) * 36) }}
                         >
                           <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-card border border-border text-[10px] px-1.5 py-0.5 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
                             {set.weight} lbs × {set.reps}

@@ -25,6 +25,7 @@ class WorkoutService():
         new_workout.name = workout.name
         new_workout.type = workout.type
         new_workout.duration = workout.duration
+        new_workout.is_public = workout.is_public
         new_workout.user_id = workout.user_id
 
         new_exercises = []
@@ -57,9 +58,12 @@ class WorkoutService():
 
         return new_workout
 
-    def delete_workout(self, workout_id):
+    def delete_workout(self, workout_id: int, user_id: int):
+        from fastapi import HTTPException
         workout = self.repo.get_workout(workout_id, self.session)
-        if workout:
-            self.repo.delete_workout(workout_id, self.session)
-
+        if not workout:
+            raise HTTPException(status_code=404, detail="Workout not found")
+        if workout.user_id != user_id:
+            raise HTTPException(status_code=403, detail="Not your workout")
+        self.repo.delete_workout(workout_id, self.session)
         return workout

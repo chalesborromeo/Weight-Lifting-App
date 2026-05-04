@@ -68,13 +68,21 @@ export default function Gyms() {
   };
 
   const handleCheckIn = async (gym: NearbyGym) => {
-    const newCheckin = await gymsApi.checkin(gym.name, gym.address ?? null);
-    setCheckins((prev) => [newCheckin, ...prev]);
+    try {
+      const newCheckin = await gymsApi.checkin(gym.name, gym.address ?? null);
+      setCheckins((prev) => [newCheckin, ...prev]);
+    } catch {
+      setError("Failed to check in. Please try again.");
+    }
   };
 
   const handleDeleteCheckin = async (id: number) => {
-    await gymsApi.deleteCheckin(id);
-    setCheckins((prev) => prev.filter((c) => c.id !== id));
+    try {
+      await gymsApi.deleteCheckin(id);
+      setCheckins((prev) => prev.filter((c) => c.id !== id));
+    } catch {
+      setError("Failed to remove check-in. Please try again.");
+    }
   };
 
   return (
@@ -162,14 +170,20 @@ export default function Gyms() {
   );
 }
 
-function GymCard({ gym, onCheckIn }: { gym: NearbyGym; onCheckIn: () => void }) {
+function GymCard({ gym, onCheckIn }: { gym: NearbyGym; onCheckIn: () => Promise<void> }) {
   const hours = fmtHours(gym.hours_open, gym.hours_close);
   const [checkedIn, setCheckedIn] = useState(false);
+  const [checking, setChecking] = useState(false);
 
-  const handleCheckIn = () => {
-    onCheckIn();
-    setCheckedIn(true);
-    setTimeout(() => setCheckedIn(false), 3000);
+  const handleCheckIn = async () => {
+    setChecking(true);
+    try {
+      await onCheckIn();
+      setCheckedIn(true);
+      setTimeout(() => setCheckedIn(false), 3000);
+    } finally {
+      setChecking(false);
+    }
   };
 
   return (
@@ -207,14 +221,15 @@ function GymCard({ gym, onCheckIn }: { gym: NearbyGym; onCheckIn: () => void }) 
 
       <button
         onClick={handleCheckIn}
-        className={`w-full flex items-center justify-center gap-2 py-2 rounded-[12px] text-sm transition-colors ${
+        disabled={checking}
+        className={`w-full flex items-center justify-center gap-2 py-2 rounded-[12px] text-sm transition-colors disabled:opacity-50 ${
           checkedIn
             ? "bg-green-500/20 text-green-600"
             : "bg-accent/10 text-accent hover:bg-accent/20"
         }`}
       >
         <LogIn className="w-4 h-4" />
-        {checkedIn ? "Checked in!" : "Check In"}
+        {checking ? "Checking in..." : checkedIn ? "Checked in!" : "Check In"}
       </button>
     </div>
   );

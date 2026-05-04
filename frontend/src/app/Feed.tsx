@@ -61,7 +61,7 @@ export default function Feed() {
     setError(null);
     try {
       const [feedPosts, suggested] = await Promise.all([
-        postsApi.getFeed(),
+        currentMode === "global" ? postsApi.getGlobal() : postsApi.getFeed(),
         usersApi.suggestions().catch(() => [] as User[]),
       ]);
       setPosts(feedPosts);
