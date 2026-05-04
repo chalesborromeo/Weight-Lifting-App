@@ -13,6 +13,19 @@ export default function Login() {
 
   const canSubmit = email.trim().length > 0 && password.length > 0;
 
+  const handleDemoLogin = async () => {
+    setSubmitting(true);
+    setError(null);
+    try {
+      await login({ email: "demo@spotter.app", password: "demo1234" });
+      navigate('/feed');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Demo login failed.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
@@ -74,6 +87,22 @@ export default function Login() {
             {submitting ? 'Signing in...' : 'Sign In'}
           </motion.button>
         </form>
+
+        <div className="relative flex items-center gap-3">
+          <div className="flex-1 h-px bg-border" />
+          <span className="text-xs text-muted-foreground">or</span>
+          <div className="flex-1 h-px bg-border" />
+        </div>
+
+        <motion.button
+          whileTap={{ scale: 0.97 }}
+          type="button"
+          onClick={handleDemoLogin}
+          disabled={submitting}
+          className="w-full px-6 py-4 rounded-[15px] text-base border border-accent text-accent hover:bg-accent/10 transition-colors disabled:opacity-50"
+        >
+          {submitting ? 'Signing in...' : '✨ Demo Login'}
+        </motion.button>
 
         <p className="text-center text-sm text-muted-foreground">
           Don't have an account?{' '}

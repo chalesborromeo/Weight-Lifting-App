@@ -89,17 +89,17 @@ export default function Stats() {
           {periodic.length > 0 && (
             <div className="bg-card rounded-[16px] p-4 space-y-3">
               <h2 className="text-sm font-semibold">Volume by Week</h2>
-              <div className="flex items-end gap-1.5 h-32">
+              <div className="flex items-end gap-1.5" style={{ height: 128 }}>
                 {periodic.map((p) => (
                   <div
                     key={p.period_start}
-                    className="flex-1 flex flex-col items-center gap-1"
+                    className="flex-1 flex flex-col items-center justify-end gap-1"
                   >
                     <div
                       className="w-full bg-accent/80 rounded-t-[4px]"
-                      style={{ height: `${(p.total_volume / maxVolume) * 100}%` }}
+                      style={{ height: Math.max(4, (p.total_volume / maxVolume) * 96) }}
                     />
-                    <span className="text-[9px] text-muted-foreground">
+                    <span className="text-[9px] text-muted-foreground leading-none">
                       {new Date(p.period_start).toLocaleDateString("en-US", {
                         month: "short",
                         day: "numeric",
